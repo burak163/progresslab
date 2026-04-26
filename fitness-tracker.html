@@ -1,0 +1,1588 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kişisel Fitness ve Beslenme Takip</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #0f1115;
+  color: #e8e8e8;
+  min-height: 100vh;
+  padding: 16px;
+  font-size: 15px;
+  line-height: 1.5;
+}
+.container { max-width: 1100px; margin: 0 auto; }
+h1 {
+  font-size: 22px;
+  font-weight: 500;
+  margin-bottom: 4px;
+  color: #fff;
+}
+.subtitle {
+  color: #8a8a8a;
+  font-size: 13px;
+  margin-bottom: 20px;
+}
+.tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #2a2d35;
+  overflow-x: auto;
+}
+.tab {
+  padding: 10px 16px;
+  background: transparent;
+  border: none;
+  color: #8a8a8a;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s;
+}
+.tab:hover { color: #ccc; }
+.tab.active {
+  color: #fff;
+  border-bottom-color: #5DCAA5;
+}
+.panel { display: none; }
+.panel.active { display: block; }
+.card {
+  background: #181b22;
+  border: 1px solid #2a2d35;
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+.card-title {
+  font-size: 15px;
+  font-weight: 500;
+  margin-bottom: 12px;
+  color: #fff;
+}
+.row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+.row > * { flex: 1; min-width: 100px; }
+input, select, textarea {
+  background: #0f1115;
+  border: 1px solid #2a2d35;
+  border-radius: 6px;
+  padding: 8px 10px;
+  color: #e8e8e8;
+  font-size: 14px;
+  font-family: inherit;
+  width: 100%;
+}
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: #5DCAA5;
+}
+label {
+  display: block;
+  font-size: 12px;
+  color: #8a8a8a;
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+button {
+  background: #5DCAA5;
+  color: #04342C;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 14px;
+  font-weight: 500;
+  cursor: pointer;
+  font-size: 14px;
+  transition: opacity 0.15s;
+}
+button:hover { opacity: 0.85; }
+button.secondary {
+  background: #2a2d35;
+  color: #e8e8e8;
+}
+button.danger {
+  background: #501313;
+  color: #F7C1C1;
+}
+button.small {
+  padding: 4px 10px;
+  font-size: 12px;
+}
+.grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+.grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+.stat {
+  background: #0f1115;
+  border: 1px solid #2a2d35;
+  border-radius: 8px;
+  padding: 12px;
+}
+.stat-label {
+  font-size: 11px;
+  color: #8a8a8a;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+.stat-value {
+  font-size: 20px;
+  font-weight: 500;
+  color: #fff;
+}
+.stat-sub {
+  font-size: 11px;
+  color: #5DCAA5;
+  margin-top: 2px;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+th {
+  text-align: left;
+  padding: 8px;
+  border-bottom: 1px solid #2a2d35;
+  color: #8a8a8a;
+  font-weight: 500;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+td {
+  padding: 8px;
+  border-bottom: 1px solid #1a1c22;
+}
+tr:hover td { background: #0f1115; }
+.progress-bar {
+  height: 6px;
+  background: #2a2d35;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 6px;
+}
+.progress-fill {
+  height: 100%;
+  background: #5DCAA5;
+  transition: width 0.3s;
+}
+.progress-fill.over { background: #E24B4A; }
+.exercise-block {
+  background: #0f1115;
+  border: 1px solid #2a2d35;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 8px;
+}
+.set-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin-bottom: 4px;
+  font-size: 13px;
+}
+.set-row input { padding: 4px 8px; font-size: 13px; }
+.set-num {
+  width: 24px;
+  color: #8a8a8a;
+  font-size: 12px;
+}
+.empty {
+  text-align: center;
+  color: #8a8a8a;
+  padding: 24px;
+  font-size: 13px;
+}
+.template-card {
+  background: #0f1115;
+  border: 1px solid #2a2d35;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+.template-card:hover { border-color: #5DCAA5; }
+.template-name { font-weight: 500; font-size: 14px; margin-bottom: 4px; }
+.template-meta { font-size: 12px; color: #8a8a8a; }
+.flex-between { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.badge {
+  display: inline-block;
+  background: #1a4d3e;
+  color: #5DCAA5;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+}
+.food-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  border-bottom: 1px solid #1a1c22;
+  font-size: 13px;
+  cursor: pointer;
+}
+.food-item:hover { background: #0f1115; }
+.macro-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #8a8a8a;
+  margin-top: 2px;
+}
+.delete-x {
+  background: transparent;
+  color: #8a8a8a;
+  padding: 2px 6px;
+  font-size: 14px;
+}
+.delete-x:hover { color: #E24B4A; }
+canvas { max-width: 100%; }
+.chart-container {
+  position: relative;
+  height: 280px;
+  margin-top: 12px;
+}
+.section-divider {
+  height: 1px;
+  background: #2a2d35;
+  margin: 16px 0;
+}
+.tag {
+  display: inline-block;
+  font-size: 11px;
+  padding: 2px 6px;
+  background: #2a2d35;
+  border-radius: 4px;
+  color: #ccc;
+  margin-right: 4px;
+}
+.help-text {
+  font-size: 12px;
+  color: #8a8a8a;
+  margin-top: 4px;
+}
+@media (max-width: 600px) {
+  .row { flex-direction: column; }
+  .row > * { min-width: 100%; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Fitness ve Beslenme Takibi</h1>
+  <p class="subtitle">Kişisel kullanım, veriler tarayıcında saklanır</p>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="dashboard">Panel</button>
+    <button class="tab" data-tab="workout">Antrenman</button>
+    <button class="tab" data-tab="templates">Programlar</button>
+    <button class="tab" data-tab="nutrition">Beslenme</button>
+    <button class="tab" data-tab="foods">Besin DB</button>
+    <button class="tab" data-tab="body">Vücut</button>
+    <button class="tab" data-tab="progress">Gelişim</button>
+    <button class="tab" data-tab="settings">Ayarlar</button>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="panel active" id="dashboard">
+    <div class="card">
+      <div class="card-title">Bugün <span id="today-date" style="color:#8a8a8a;font-weight:400;font-size:13px;"></span></div>
+      <div class="grid-3" id="today-macros"></div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Son antrenmanlar</div>
+        <div id="recent-workouts"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Vücut ağırlığı</div>
+        <div id="weight-summary"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WORKOUT -->
+  <div class="panel" id="workout">
+    <div class="card">
+      <div class="flex-between">
+        <div class="card-title" style="margin-bottom:0;">Yeni antrenman</div>
+        <div>
+          <select id="load-template" style="width:auto; display:inline-block;">
+            <option value="">Program seç...</option>
+          </select>
+          <button class="secondary" onclick="loadTemplate()">Yükle</button>
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label>Tarih</label>
+          <input type="date" id="workout-date">
+        </div>
+        <div style="flex:2;">
+          <label>Antrenman adı</label>
+          <input type="text" id="workout-name" placeholder="ör: Push Day, Bacak">
+        </div>
+      </div>
+      <div id="exercises-list"></div>
+      <div class="row" style="margin-top:12px;">
+        <button onclick="addExercise()">+ Egzersiz ekle</button>
+        <button class="secondary" onclick="saveWorkout()">Antrenmanı kaydet</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TEMPLATES -->
+  <div class="panel" id="templates">
+    <div class="card">
+      <div class="card-title">Yeni program oluştur</div>
+      <div class="row">
+        <input type="text" id="template-name" placeholder="Program adı (ör: Push Day A)">
+        <button onclick="addTemplateExerciseUI()">+ Egzersiz</button>
+      </div>
+      <div id="template-exercises"></div>
+      <button onclick="saveTemplate()" style="margin-top:8px;">Programı kaydet</button>
+    </div>
+    <div class="card">
+      <div class="card-title">Kayıtlı programlar</div>
+      <div id="templates-list"></div>
+    </div>
+  </div>
+
+  <!-- NUTRITION -->
+  <div class="panel" id="nutrition">
+    <div class="card">
+      <div class="flex-between">
+        <div class="card-title" style="margin-bottom:0;">
+          <input type="date" id="nutrition-date" style="width:auto; display:inline-block;" onchange="renderNutrition()">
+        </div>
+        <button class="secondary small" onclick="toggleGoalsEdit()">Hedefleri düzenle</button>
+      </div>
+      <div id="goals-edit-panel" style="display:none; margin-top:12px; padding:12px; background:#0f1115; border-radius:8px;">
+        <div class="row">
+          <div>
+            <label>Kalori</label>
+            <input type="number" id="quick-goal-cal">
+          </div>
+          <div>
+            <label>Protein (g)</label>
+            <input type="number" id="quick-goal-pro">
+          </div>
+          <div>
+            <label>Karb (g)</label>
+            <input type="number" id="quick-goal-carb">
+          </div>
+          <div>
+            <label>Yağ (g)</label>
+            <input type="number" id="quick-goal-fat">
+          </div>
+          <div style="display:flex; align-items:flex-end;">
+            <button onclick="saveQuickGoals()">Kaydet</button>
+          </div>
+        </div>
+      </div>
+      <div class="grid-3" id="nutrition-macros" style="margin-top:12px;"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Besin ekle</div>
+      <div class="row">
+        <div style="flex:2;">
+          <label>Hızlı arama (DB'den)</label>
+          <input type="text" id="food-search" placeholder="Besin adı yaz..." oninput="searchFood()">
+          <div id="food-search-results" style="margin-top:4px;"></div>
+        </div>
+      </div>
+      <div class="section-divider"></div>
+      <div class="row">
+        <div style="flex:2;">
+          <label>Besin adı</label>
+          <input type="text" id="meal-name" placeholder="ör: Tavuk göğsü" oninput="clearFoodLink()">
+        </div>
+        <div>
+          <label>Miktar</label>
+          <input type="number" id="meal-amount" step="0.1" placeholder="100" oninput="recalcMealMacros()">
+        </div>
+        <div>
+          <label>Birim</label>
+          <select id="meal-unit">
+            <option value="g">gram</option>
+            <option value="adet">adet</option>
+            <option value="kase">kase</option>
+            <option value="dilim">dilim</option>
+            <option value="kaşık">yemek kaşığı</option>
+            <option value="bardak">bardak</option>
+            <option value="fincan">fincan</option>
+            <option value="porsiyon">porsiyon</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label>Kalori</label>
+          <input type="number" id="meal-cal" step="0.1">
+        </div>
+        <div>
+          <label>Protein (g)</label>
+          <input type="number" id="meal-pro" step="0.1">
+        </div>
+        <div>
+          <label>Karb (g)</label>
+          <input type="number" id="meal-carb" step="0.1">
+        </div>
+        <div>
+          <label>Yağ (g)</label>
+          <input type="number" id="meal-fat" step="0.1">
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label>Öğün</label>
+          <select id="meal-type">
+            <option>Kahvaltı</option>
+            <option>Öğle</option>
+            <option>Akşam</option>
+            <option>Atıştırmalık</option>
+          </select>
+        </div>
+        <div style="display:flex; align-items:flex-end; gap:6px;">
+          <button onclick="addMeal()">Ekle</button>
+          <button class="secondary" onclick="saveToFoodDB()">Veritabanına da kaydet</button>
+        </div>
+      </div>
+      <p class="help-text">DB'den besin seçince miktar otomatik dolar, sen istediğin gibi değiştirirsin (ör: 2 adet, 1.5 kase). Makrolar anlık hesaplanır. Manuel girişte de değerleri direkt yazabilirsin.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Bugünün öğünleri</div>
+      <div id="meals-list"></div>
+    </div>
+  </div>
+
+  <!-- FOOD DB -->
+  <div class="panel" id="foods">
+    <div class="card">
+      <div class="card-title">Besin veritabanı (100g başına)</div>
+      <div class="row">
+        <input type="text" id="db-name" placeholder="Besin adı">
+        <input type="number" id="db-cal" placeholder="Kalori" step="0.1">
+        <input type="number" id="db-pro" placeholder="Protein" step="0.1">
+        <input type="number" id="db-carb" placeholder="Karb" step="0.1">
+        <input type="number" id="db-fat" placeholder="Yağ" step="0.1">
+        <button onclick="addToFoodDB()">Ekle</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Kayıtlı besinler</div>
+      <div class="row" style="margin-bottom:12px;">
+        <input type="text" id="food-db-filter" placeholder="Besin ara..." oninput="renderFoodDB()" style="flex:2;">
+        <select id="food-db-show" onchange="renderFoodDB()" style="max-width:160px;">
+          <option value="all">Tümü</option>
+          <option value="custom">Sadece eklediklerim</option>
+          <option value="builtin">Sadece hazır olanlar</option>
+        </select>
+      </div>
+      <div id="food-db-list"></div>
+    </div>
+  </div>
+
+  <!-- BODY -->
+  <div class="panel" id="body">
+    <div class="card">
+      <div class="card-title">Vücut ölçümü ekle</div>
+      <div class="row">
+        <div>
+          <label>Tarih</label>
+          <input type="date" id="body-date">
+        </div>
+        <div>
+          <label>Kilo (kg)</label>
+          <input type="number" id="body-weight" step="0.1">
+        </div>
+        <div>
+          <label>Bel (cm)</label>
+          <input type="number" id="body-waist" step="0.1">
+        </div>
+        <div>
+          <label>Göğüs (cm)</label>
+          <input type="number" id="body-chest" step="0.1">
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label>Kol (cm)</label>
+          <input type="number" id="body-arm" step="0.1">
+        </div>
+        <div>
+          <label>Bacak (cm)</label>
+          <input type="number" id="body-leg" step="0.1">
+        </div>
+        <div>
+          <label>Yağ %</label>
+          <input type="number" id="body-fat" step="0.1">
+        </div>
+        <div style="display:flex; align-items:flex-end;">
+          <button onclick="saveBody()">Kaydet</button>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Geçmiş ölçümler</div>
+      <div id="body-list"></div>
+    </div>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="panel" id="progress">
+    <div class="card">
+      <div class="card-title">Egzersiz gelişim grafiği</div>
+      <div class="row">
+        <select id="progress-exercise">
+          <option value="">Egzersiz seç...</option>
+        </select>
+        <select id="progress-metric">
+          <option value="1rm">Tahmini 1RM</option>
+          <option value="topVolume">En ağır set hacmi</option>
+          <option value="totalVolume">Toplam hacim (kg)</option>
+          <option value="maxWeight">Max ağırlık</option>
+        </select>
+        <button onclick="renderProgressChart()">Göster</button>
+      </div>
+      <div class="chart-container">
+        <canvas id="progress-chart"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Kilo gelişimi</div>
+      <div class="chart-container">
+        <canvas id="weight-chart"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Kişisel rekorlar (PR)</div>
+      <div id="pr-list"></div>
+    </div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="panel" id="settings">
+    <div class="card">
+      <div class="card-title">Günlük makro hedefleri</div>
+      <div class="row">
+        <div>
+          <label>Kalori</label>
+          <input type="number" id="goal-cal" step="1">
+        </div>
+        <div>
+          <label>Protein (g)</label>
+          <input type="number" id="goal-pro" step="1">
+        </div>
+        <div>
+          <label>Karb (g)</label>
+          <input type="number" id="goal-carb" step="1">
+        </div>
+        <div>
+          <label>Yağ (g)</label>
+          <input type="number" id="goal-fat" step="1">
+        </div>
+      </div>
+      <button onclick="saveGoals()">Hedefleri kaydet</button>
+    </div>
+    <div class="card">
+      <div class="card-title">Veri yönetimi</div>
+      <div class="row">
+        <button class="secondary" onclick="exportData()">Tüm veriyi indir (JSON)</button>
+        <button class="secondary" onclick="document.getElementById('import-file').click()">Veri içe aktar</button>
+        <input type="file" id="import-file" accept=".json" style="display:none;" onchange="importData(event)">
+        <button class="danger" onclick="clearAll()">Tüm veriyi sil</button>
+      </div>
+      <p class="help-text" style="margin-top:8px;">Veriler tarayıcının localStorage'ında saklanır. Tarayıcı temizlenirse veri kaybolur, periyodik olarak dışa aktar.</p>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+// ============== STATE ==============
+const STORAGE_KEY = 'fitness_tracker_v1';
+
+// Built-in Türkçe besin DB
+// Format: { name, cal, pro, carb, fat, unit, baseAmount }
+// unit: ölçü birimi (g, adet, kase, dilim, kaşık, bardak)
+// baseAmount: değerlerin kaç birim için verildiği (genelde 100g, ama 1 adet, 1 kase vb. olabilir)
+const BUILT_IN_FOODS = [
+  // === PRATİK BİRİMLİ (sık kullanılanlar) ===
+  { name: 'Haşlanmış yumurta (1 adet, ~50g)', cal: 78, pro: 6.3, carb: 0.6, fat: 5.3, unit: 'adet', baseAmount: 1 },
+  { name: 'Omlet (2 yumurta, yağsız)', cal: 156, pro: 13, carb: 1.2, fat: 11, unit: 'porsiyon', baseAmount: 1 },
+  { name: 'Omlet (2 yumurta + tereyağı)', cal: 230, pro: 13, carb: 1.2, fat: 19, unit: 'porsiyon', baseAmount: 1 },
+  { name: 'Menemen (2 yumurta + domates + biber)', cal: 240, pro: 14, carb: 6, fat: 18, unit: 'porsiyon', baseAmount: 1 },
+  { name: 'Sahanda yumurta (1 adet)', cal: 92, pro: 6.3, carb: 0.4, fat: 7, unit: 'adet', baseAmount: 1 },
+  { name: 'Salatalık (1 orta boy, ~150g)', cal: 23, pro: 1, carb: 5.4, fat: 0.2, unit: 'adet', baseAmount: 1 },
+  { name: 'Domates (1 orta boy, ~120g)', cal: 22, pro: 1.1, carb: 4.7, fat: 0.2, unit: 'adet', baseAmount: 1 },
+  { name: 'Zeytin yeşil (1 adet, ~4g)', cal: 6, pro: 0.04, carb: 0.16, fat: 0.6, unit: 'adet', baseAmount: 1 },
+  { name: 'Zeytin siyah (1 adet, ~4g)', cal: 5, pro: 0.03, carb: 0.24, fat: 0.44, unit: 'adet', baseAmount: 1 },
+  { name: 'Mercimek çorbası (1 kase, ~250ml)', cal: 165, pro: 9, carb: 25, fat: 3, unit: 'kase', baseAmount: 1 },
+  { name: 'Domates çorbası (1 kase)', cal: 130, pro: 4, carb: 18, fat: 5, unit: 'kase', baseAmount: 1 },
+  { name: 'Tarhana çorbası (1 kase)', cal: 110, pro: 5, carb: 18, fat: 2.5, unit: 'kase', baseAmount: 1 },
+  { name: 'Yayla çorbası (1 kase)', cal: 145, pro: 6, carb: 18, fat: 5, unit: 'kase', baseAmount: 1 },
+  { name: 'Ezogelin çorbası (1 kase)', cal: 155, pro: 8, carb: 24, fat: 3, unit: 'kase', baseAmount: 1 },
+  { name: 'Ekmek (1 dilim, ~30g)', cal: 80, pro: 2.7, carb: 15, fat: 1, unit: 'dilim', baseAmount: 1 },
+  { name: 'Tam buğday ekmeği (1 dilim, ~30g)', cal: 74, pro: 4, carb: 12, fat: 1, unit: 'dilim', baseAmount: 1 },
+  { name: 'Simit (1 adet, ~100g)', cal: 350, pro: 10, carb: 65, fat: 6, unit: 'adet', baseAmount: 1 },
+  { name: 'Beyaz peynir (1 dilim, ~30g)', cal: 79, pro: 5.1, carb: 1.2, fat: 6.3, unit: 'dilim', baseAmount: 1 },
+  { name: 'Kaşar peyniri (1 dilim, ~25g)', cal: 88, pro: 6.3, carb: 0.6, fat: 6.8, unit: 'dilim', baseAmount: 1 },
+  { name: 'Tereyağı (1 yemek kaşığı, ~14g)', cal: 100, pro: 0.1, carb: 0, fat: 11, unit: 'kaşık', baseAmount: 1 },
+  { name: 'Zeytinyağı (1 yemek kaşığı, ~14ml)', cal: 124, pro: 0, carb: 0, fat: 14, unit: 'kaşık', baseAmount: 1 },
+  { name: 'Bal (1 yemek kaşığı, ~21g)', cal: 64, pro: 0.06, carb: 17, fat: 0, unit: 'kaşık', baseAmount: 1 },
+  { name: 'Reçel (1 yemek kaşığı, ~20g)', cal: 56, pro: 0.08, carb: 14, fat: 0, unit: 'kaşık', baseAmount: 1 },
+  { name: 'Tahin (1 yemek kaşığı, ~15g)', cal: 89, pro: 2.6, carb: 3.2, fat: 8, unit: 'kaşık', baseAmount: 1 },
+  { name: 'Pekmez (1 yemek kaşığı, ~20g)', cal: 59, pro: 0.3, carb: 14.6, fat: 0, unit: 'kaşık', baseAmount: 1 },
+  { name: 'Süt (1 bardak, 200ml)', cal: 122, pro: 6.4, carb: 9.6, fat: 6.6, unit: 'bardak', baseAmount: 1 },
+  { name: 'Süt yarım yağlı (1 bardak, 200ml)', cal: 100, pro: 6.8, carb: 10, fat: 3.6, unit: 'bardak', baseAmount: 1 },
+  { name: 'Yoğurt (1 kase, ~200g)', cal: 122, pro: 7, carb: 9.4, fat: 6.6, unit: 'kase', baseAmount: 1 },
+  { name: 'Süzme yoğurt (1 kase, ~200g)', cal: 192, pro: 18, carb: 8, fat: 10, unit: 'kase', baseAmount: 1 },
+  { name: 'Ayran (1 bardak, 200ml)', cal: 72, pro: 3.4, carb: 5.2, fat: 3.6, unit: 'bardak', baseAmount: 1 },
+  { name: 'Çay (1 bardak, sade)', cal: 2, pro: 0, carb: 0.5, fat: 0, unit: 'bardak', baseAmount: 1 },
+  { name: 'Türk kahvesi (1 fincan, sade)', cal: 2, pro: 0.1, carb: 0, fat: 0, unit: 'fincan', baseAmount: 1 },
+  { name: 'Şeker (1 küp, ~5g)', cal: 19, pro: 0, carb: 5, fat: 0, unit: 'adet', baseAmount: 1 },
+  { name: 'Şeker (1 çay kaşığı, ~4g)', cal: 16, pro: 0, carb: 4, fat: 0, unit: 'kaşık', baseAmount: 1 },
+  { name: 'Pirinç pilavı (1 porsiyon, ~150g)', cal: 195, pro: 4, carb: 42, fat: 0.5, unit: 'porsiyon', baseAmount: 1 },
+  { name: 'Bulgur pilavı (1 porsiyon, ~150g)', cal: 125, pro: 4.5, carb: 28, fat: 0.3, unit: 'porsiyon', baseAmount: 1 },
+  { name: 'Makarna (1 porsiyon, ~200g pişmiş)', cal: 316, pro: 11.6, carb: 62, fat: 1.8, unit: 'porsiyon', baseAmount: 1 },
+  { name: 'Patates kızartması (1 porsiyon, ~150g)', cal: 470, pro: 5, carb: 63, fat: 23, unit: 'porsiyon', baseAmount: 1 },
+  { name: 'Elma (1 orta boy, ~180g)', cal: 94, pro: 0.5, carb: 25, fat: 0.4, unit: 'adet', baseAmount: 1 },
+  { name: 'Muz (1 orta boy, ~120g)', cal: 107, pro: 1.3, carb: 27, fat: 0.4, unit: 'adet', baseAmount: 1 },
+  { name: 'Portakal (1 orta boy, ~150g)', cal: 71, pro: 1.4, carb: 18, fat: 0.2, unit: 'adet', baseAmount: 1 },
+  { name: 'Mandalina (1 adet, ~80g)', cal: 42, pro: 0.6, carb: 10.4, fat: 0.2, unit: 'adet', baseAmount: 1 },
+
+  // === 100g BAŞINA (gerçek miktar bazlı) ===
+  // Et/tavuk/balık
+  { name: 'Tavuk göğsü (pişmiş, derisiz)', cal: 165, pro: 31, carb: 0, fat: 3.6, unit: 'g', baseAmount: 100 },
+  { name: 'Tavuk göğsü (çiğ)', cal: 120, pro: 23, carb: 0, fat: 2.6, unit: 'g', baseAmount: 100 },
+  { name: 'Tavuk but (pişmiş, derisiz)', cal: 209, pro: 26, carb: 0, fat: 11, unit: 'g', baseAmount: 100 },
+  { name: 'Hindi göğsü (pişmiş)', cal: 135, pro: 30, carb: 0, fat: 1, unit: 'g', baseAmount: 100 },
+  { name: 'Dana eti (yağsız, pişmiş)', cal: 250, pro: 26, carb: 0, fat: 15, unit: 'g', baseAmount: 100 },
+  { name: 'Dana kıyma (%15 yağ, çiğ)', cal: 215, pro: 18, carb: 0, fat: 15, unit: 'g', baseAmount: 100 },
+  { name: 'Dana kıyma (%5 yağ, çiğ)', cal: 137, pro: 21, carb: 0, fat: 5, unit: 'g', baseAmount: 100 },
+  { name: 'Kuzu eti (pişmiş)', cal: 294, pro: 25, carb: 0, fat: 21, unit: 'g', baseAmount: 100 },
+  { name: 'Sucuk', cal: 463, pro: 22, carb: 2, fat: 40, unit: 'g', baseAmount: 100 },
+  { name: 'Sosis', cal: 301, pro: 12, carb: 1.5, fat: 27, unit: 'g', baseAmount: 100 },
+  { name: 'Pastırma', cal: 240, pro: 36, carb: 0, fat: 10, unit: 'g', baseAmount: 100 },
+  { name: 'Salam', cal: 250, pro: 14, carb: 1, fat: 21, unit: 'g', baseAmount: 100 },
+  { name: 'Somon (pişmiş)', cal: 208, pro: 22, carb: 0, fat: 13, unit: 'g', baseAmount: 100 },
+  { name: 'Levrek (pişmiş)', cal: 124, pro: 22, carb: 0, fat: 3, unit: 'g', baseAmount: 100 },
+  { name: 'Çipura (pişmiş)', cal: 130, pro: 21, carb: 0, fat: 5, unit: 'g', baseAmount: 100 },
+  { name: 'Hamsi (taze)', cal: 131, pro: 20, carb: 0, fat: 5, unit: 'g', baseAmount: 100 },
+  { name: 'Ton balığı (suda, kutu)', cal: 116, pro: 26, carb: 0, fat: 1, unit: 'g', baseAmount: 100 },
+  { name: 'Karides (pişmiş)', cal: 99, pro: 24, carb: 0.2, fat: 0.3, unit: 'g', baseAmount: 100 },
+
+  // Yumurta/kahvaltılıklar (gram bazlı)
+  { name: 'Yumurta (tam, çiğ)', cal: 143, pro: 13, carb: 0.7, fat: 9.5, unit: 'g', baseAmount: 100 },
+  { name: 'Yumurta beyazı', cal: 52, pro: 11, carb: 0.7, fat: 0.2, unit: 'g', baseAmount: 100 },
+  { name: 'Yumurta sarısı', cal: 322, pro: 16, carb: 3.6, fat: 27, unit: 'g', baseAmount: 100 },
+  { name: 'Bal', cal: 304, pro: 0.3, carb: 82, fat: 0, unit: 'g', baseAmount: 100 },
+  { name: 'Reçel (çilek)', cal: 278, pro: 0.4, carb: 69, fat: 0.1, unit: 'g', baseAmount: 100 },
+  { name: 'Tahin', cal: 595, pro: 17, carb: 21, fat: 53, unit: 'g', baseAmount: 100 },
+  { name: 'Pekmez (üzüm)', cal: 293, pro: 1.5, carb: 73, fat: 0, unit: 'g', baseAmount: 100 },
+  { name: 'Zeytin (yeşil)', cal: 145, pro: 1, carb: 4, fat: 15, unit: 'g', baseAmount: 100 },
+  { name: 'Zeytin (siyah)', cal: 115, pro: 0.8, carb: 6, fat: 11, unit: 'g', baseAmount: 100 },
+
+  // Süt ürünleri
+  { name: 'Süt (tam yağlı)', cal: 61, pro: 3.2, carb: 4.8, fat: 3.3, unit: 'g', baseAmount: 100 },
+  { name: 'Süt (yarım yağlı)', cal: 50, pro: 3.4, carb: 5, fat: 1.8, unit: 'g', baseAmount: 100 },
+  { name: 'Süt (yağsız)', cal: 34, pro: 3.4, carb: 5, fat: 0.1, unit: 'g', baseAmount: 100 },
+  { name: 'Yoğurt (tam yağlı)', cal: 61, pro: 3.5, carb: 4.7, fat: 3.3, unit: 'g', baseAmount: 100 },
+  { name: 'Yoğurt (yağsız)', cal: 56, pro: 5.7, carb: 7.7, fat: 0.2, unit: 'g', baseAmount: 100 },
+  { name: 'Süzme yoğurt', cal: 96, pro: 9, carb: 4, fat: 5, unit: 'g', baseAmount: 100 },
+  { name: 'Yunan yoğurdu (yağsız)', cal: 59, pro: 10, carb: 3.6, fat: 0.4, unit: 'g', baseAmount: 100 },
+  { name: 'Ayran', cal: 36, pro: 1.7, carb: 2.6, fat: 1.8, unit: 'g', baseAmount: 100 },
+  { name: 'Kefir', cal: 41, pro: 3.8, carb: 4.5, fat: 1, unit: 'g', baseAmount: 100 },
+  { name: 'Beyaz peynir (yağlı)', cal: 264, pro: 17, carb: 4, fat: 21, unit: 'g', baseAmount: 100 },
+  { name: 'Beyaz peynir (light)', cal: 180, pro: 18, carb: 3, fat: 11, unit: 'g', baseAmount: 100 },
+  { name: 'Kaşar peyniri', cal: 350, pro: 25, carb: 2.5, fat: 27, unit: 'g', baseAmount: 100 },
+  { name: 'Lor peyniri', cal: 98, pro: 11, carb: 3, fat: 4.3, unit: 'g', baseAmount: 100 },
+  { name: 'Çökelek', cal: 86, pro: 14, carb: 2, fat: 2.5, unit: 'g', baseAmount: 100 },
+  { name: 'Tereyağı', cal: 717, pro: 0.9, carb: 0.1, fat: 81, unit: 'g', baseAmount: 100 },
+  { name: 'Krem peynir', cal: 342, pro: 6, carb: 4, fat: 34, unit: 'g', baseAmount: 100 },
+
+  // Tahıl/ekmek/makarna/pirinç
+  { name: 'Beyaz ekmek', cal: 265, pro: 9, carb: 49, fat: 3.2, unit: 'g', baseAmount: 100 },
+  { name: 'Tam buğday ekmeği', cal: 247, pro: 13, carb: 41, fat: 3.4, unit: 'g', baseAmount: 100 },
+  { name: 'Çavdar ekmeği', cal: 259, pro: 9, carb: 48, fat: 3.3, unit: 'g', baseAmount: 100 },
+  { name: 'Lavaş', cal: 275, pro: 9, carb: 56, fat: 1.5, unit: 'g', baseAmount: 100 },
+  { name: 'Yufka', cal: 275, pro: 8, carb: 57, fat: 1, unit: 'g', baseAmount: 100 },
+  { name: 'Pirinç (pişmiş, beyaz)', cal: 130, pro: 2.7, carb: 28, fat: 0.3, unit: 'g', baseAmount: 100 },
+  { name: 'Pirinç (çiğ, beyaz)', cal: 365, pro: 7, carb: 80, fat: 0.6, unit: 'g', baseAmount: 100 },
+  { name: 'Pirinç (esmer, pişmiş)', cal: 123, pro: 2.7, carb: 26, fat: 1, unit: 'g', baseAmount: 100 },
+  { name: 'Bulgur (pişmiş)', cal: 83, pro: 3, carb: 19, fat: 0.2, unit: 'g', baseAmount: 100 },
+  { name: 'Bulgur (çiğ)', cal: 342, pro: 12, carb: 76, fat: 1.3, unit: 'g', baseAmount: 100 },
+  { name: 'Makarna (pişmiş)', cal: 158, pro: 5.8, carb: 31, fat: 0.9, unit: 'g', baseAmount: 100 },
+  { name: 'Makarna (çiğ)', cal: 371, pro: 13, carb: 74, fat: 1.5, unit: 'g', baseAmount: 100 },
+  { name: 'Yulaf ezmesi (kuru)', cal: 389, pro: 17, carb: 66, fat: 7, unit: 'g', baseAmount: 100 },
+  { name: 'Yulaf (pişmiş suyla)', cal: 71, pro: 2.5, carb: 12, fat: 1.5, unit: 'g', baseAmount: 100 },
+  { name: 'Mısır gevreği (sade)', cal: 357, pro: 8, carb: 84, fat: 0.4, unit: 'g', baseAmount: 100 },
+  { name: 'Granola', cal: 471, pro: 10, carb: 64, fat: 20, unit: 'g', baseAmount: 100 },
+  { name: 'Kuskus (pişmiş)', cal: 112, pro: 3.8, carb: 23, fat: 0.2, unit: 'g', baseAmount: 100 },
+  { name: 'Quinoa (pişmiş)', cal: 120, pro: 4.4, carb: 21, fat: 1.9, unit: 'g', baseAmount: 100 },
+  { name: 'Un (buğday)', cal: 364, pro: 10, carb: 76, fat: 1, unit: 'g', baseAmount: 100 },
+
+  // Bakliyat
+  { name: 'Mercimek (kırmızı, pişmiş)', cal: 116, pro: 9, carb: 20, fat: 0.4, unit: 'g', baseAmount: 100 },
+  { name: 'Mercimek (yeşil, pişmiş)', cal: 116, pro: 9, carb: 20, fat: 0.4, unit: 'g', baseAmount: 100 },
+  { name: 'Nohut (pişmiş)', cal: 164, pro: 9, carb: 27, fat: 2.6, unit: 'g', baseAmount: 100 },
+  { name: 'Nohut (kuru)', cal: 378, pro: 20, carb: 63, fat: 6, unit: 'g', baseAmount: 100 },
+  { name: 'Kuru fasulye (pişmiş)', cal: 127, pro: 8.7, carb: 23, fat: 0.5, unit: 'g', baseAmount: 100 },
+  { name: 'Barbunya (pişmiş)', cal: 127, pro: 8.7, carb: 22, fat: 0.5, unit: 'g', baseAmount: 100 },
+  { name: 'Bezelye (pişmiş)', cal: 84, pro: 5.4, carb: 16, fat: 0.2, unit: 'g', baseAmount: 100 },
+
+  // Sebze/meyve
+  { name: 'Domates', cal: 18, pro: 0.9, carb: 3.9, fat: 0.2, unit: 'g', baseAmount: 100 },
+  { name: 'Salatalık', cal: 15, pro: 0.7, carb: 3.6, fat: 0.1, unit: 'g', baseAmount: 100 },
+  { name: 'Soğan', cal: 40, pro: 1.1, carb: 9.3, fat: 0.1, unit: 'g', baseAmount: 100 },
+  { name: 'Sarımsak', cal: 149, pro: 6.4, carb: 33, fat: 0.5, unit: 'g', baseAmount: 100 },
+  { name: 'Patates (pişmiş)', cal: 87, pro: 1.9, carb: 20, fat: 0.1, unit: 'g', baseAmount: 100 },
+  { name: 'Tatlı patates (pişmiş)', cal: 86, pro: 1.6, carb: 20, fat: 0.1, unit: 'g', baseAmount: 100 },
+  { name: 'Havuç', cal: 41, pro: 0.9, carb: 10, fat: 0.2, unit: 'g', baseAmount: 100 },
+  { name: 'Brokoli', cal: 34, pro: 2.8, carb: 7, fat: 0.4, unit: 'g', baseAmount: 100 },
+  { name: 'Karnabahar', cal: 25, pro: 1.9, carb: 5, fat: 0.3, unit: 'g', baseAmount: 100 },
+  { name: 'Ispanak', cal: 23, pro: 2.9, carb: 3.6, fat: 0.4, unit: 'g', baseAmount: 100 },
+  { name: 'Marul', cal: 15, pro: 1.4, carb: 2.9, fat: 0.2, unit: 'g', baseAmount: 100 },
+  { name: 'Roka', cal: 25, pro: 2.6, carb: 3.6, fat: 0.7, unit: 'g', baseAmount: 100 },
+  { name: 'Biber (yeşil)', cal: 20, pro: 0.9, carb: 4.6, fat: 0.2, unit: 'g', baseAmount: 100 },
+  { name: 'Kabak', cal: 17, pro: 1.2, carb: 3.1, fat: 0.3, unit: 'g', baseAmount: 100 },
+  { name: 'Patlıcan', cal: 25, pro: 1, carb: 6, fat: 0.2, unit: 'g', baseAmount: 100 },
+  { name: 'Mantar', cal: 22, pro: 3.1, carb: 3.3, fat: 0.3, unit: 'g', baseAmount: 100 },
+  { name: 'Çilek', cal: 32, pro: 0.7, carb: 7.7, fat: 0.3, unit: 'g', baseAmount: 100 },
+  { name: 'Karpuz', cal: 30, pro: 0.6, carb: 7.6, fat: 0.2, unit: 'g', baseAmount: 100 },
+  { name: 'Kavun', cal: 34, pro: 0.8, carb: 8, fat: 0.2, unit: 'g', baseAmount: 100 },
+  { name: 'Üzüm', cal: 69, pro: 0.7, carb: 18, fat: 0.2, unit: 'g', baseAmount: 100 },
+  { name: 'Armut', cal: 57, pro: 0.4, carb: 15, fat: 0.1, unit: 'g', baseAmount: 100 },
+  { name: 'Şeftali', cal: 39, pro: 0.9, carb: 10, fat: 0.3, unit: 'g', baseAmount: 100 },
+  { name: 'Kayısı', cal: 48, pro: 1.4, carb: 11, fat: 0.4, unit: 'g', baseAmount: 100 },
+  { name: 'Avokado', cal: 160, pro: 2, carb: 9, fat: 15, unit: 'g', baseAmount: 100 },
+  { name: 'Limon', cal: 29, pro: 1.1, carb: 9, fat: 0.3, unit: 'g', baseAmount: 100 },
+
+  // Kuruyemiş/tohum
+  { name: 'Badem', cal: 579, pro: 21, carb: 22, fat: 50, unit: 'g', baseAmount: 100 },
+  { name: 'Ceviz', cal: 654, pro: 15, carb: 14, fat: 65, unit: 'g', baseAmount: 100 },
+  { name: 'Fındık', cal: 628, pro: 15, carb: 17, fat: 61, unit: 'g', baseAmount: 100 },
+  { name: 'Antep fıstığı', cal: 562, pro: 20, carb: 28, fat: 45, unit: 'g', baseAmount: 100 },
+  { name: 'Kaju', cal: 553, pro: 18, carb: 30, fat: 44, unit: 'g', baseAmount: 100 },
+  { name: 'Yer fıstığı', cal: 567, pro: 26, carb: 16, fat: 49, unit: 'g', baseAmount: 100 },
+  { name: 'Fıstık ezmesi', cal: 588, pro: 25, carb: 20, fat: 50, unit: 'g', baseAmount: 100 },
+  { name: 'Ay çekirdeği', cal: 584, pro: 21, carb: 20, fat: 51, unit: 'g', baseAmount: 100 },
+  { name: 'Kabak çekirdeği', cal: 559, pro: 30, carb: 11, fat: 49, unit: 'g', baseAmount: 100 },
+  { name: 'Chia tohumu', cal: 486, pro: 17, carb: 42, fat: 31, unit: 'g', baseAmount: 100 },
+  { name: 'Keten tohumu', cal: 534, pro: 18, carb: 29, fat: 42, unit: 'g', baseAmount: 100 },
+
+  // Yağlar
+  { name: 'Zeytinyağı', cal: 884, pro: 0, carb: 0, fat: 100, unit: 'g', baseAmount: 100 },
+  { name: 'Ayçiçek yağı', cal: 884, pro: 0, carb: 0, fat: 100, unit: 'g', baseAmount: 100 },
+  { name: 'Mısır yağı', cal: 884, pro: 0, carb: 0, fat: 100, unit: 'g', baseAmount: 100 },
+  { name: 'Hindistan cevizi yağı', cal: 862, pro: 0, carb: 0, fat: 100, unit: 'g', baseAmount: 100 },
+  { name: 'Margarin', cal: 717, pro: 0.2, carb: 0.7, fat: 81, unit: 'g', baseAmount: 100 },
+
+  // İçecekler
+  { name: 'Cola', cal: 42, pro: 0, carb: 11, fat: 0, unit: 'g', baseAmount: 100 },
+  { name: 'Cola (zero)', cal: 0.4, pro: 0, carb: 0, fat: 0, unit: 'g', baseAmount: 100 },
+  { name: 'Portakal suyu (taze)', cal: 45, pro: 0.7, carb: 10, fat: 0.2, unit: 'g', baseAmount: 100 },
+  { name: 'Elma suyu', cal: 46, pro: 0.1, carb: 11, fat: 0.1, unit: 'g', baseAmount: 100 },
+  { name: 'Maden suyu', cal: 0, pro: 0, carb: 0, fat: 0, unit: 'g', baseAmount: 100 },
+  { name: 'Bira', cal: 43, pro: 0.5, carb: 3.6, fat: 0, unit: 'g', baseAmount: 100 },
+  { name: 'Şarap (kırmızı)', cal: 85, pro: 0.1, carb: 2.6, fat: 0, unit: 'g', baseAmount: 100 },
+  { name: 'Rakı', cal: 231, pro: 0, carb: 0, fat: 0, unit: 'g', baseAmount: 100 }
+];
+
+const BUILT_IN_VERSION = 2; // Built-in DB her güncellenince bu sayıyı artır
+
+let state = {
+  workouts: [],
+  templates: [],
+  meals: [],
+  foodDB: [],
+  body: [],
+  goals: { cal: 2500, pro: 180, carb: 250, fat: 70 },
+  builtInVersion: 0
+};
+
+function load() {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (raw) {
+    try { state = { ...state, ...JSON.parse(raw) }; } catch(e) {}
+  }
+  // Built-in besinler güncellendiyse eski hazırları sil ve yenisini yükle
+  if ((state.builtInVersion || 0) < BUILT_IN_VERSION) {
+    state.foodDB = state.foodDB.filter(f => !f.builtIn);
+    BUILT_IN_FOODS.forEach((f, i) => {
+      state.foodDB.push({ id: 1000000 + i, ...f, builtIn: true });
+    });
+    state.builtInVersion = BUILT_IN_VERSION;
+    save();
+  }
+}
+function save() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+function todayStr() {
+  const d = new Date();
+  return d.toISOString().split('T')[0];
+}
+function fmt(n, dec=1) {
+  if (n === null || n === undefined || isNaN(n)) return '0';
+  return Number(n).toFixed(dec).replace(/\.0+$/, '');
+}
+
+// ============== TABS ==============
+document.querySelectorAll('.tab').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    const panel = document.getElementById(t.dataset.tab);
+    panel.classList.add('active');
+    refreshTab(t.dataset.tab);
+  });
+});
+
+function refreshTab(tab) {
+  if (tab === 'dashboard') renderDashboard();
+  if (tab === 'workout') renderTemplateOptions();
+  if (tab === 'templates') renderTemplates();
+  if (tab === 'nutrition') renderNutrition();
+  if (tab === 'foods') renderFoodDB();
+  if (tab === 'body') renderBody();
+  if (tab === 'progress') { renderExerciseOptions(); renderWeightChart(); renderPRs(); }
+  if (tab === 'settings') loadGoals();
+}
+
+// ============== WORKOUT ==============
+let currentExercises = [];
+
+function addExercise() {
+  currentExercises.push({ name: '', sets: [{ reps: '', weight: '' }] });
+  renderExercises();
+}
+function removeExercise(idx) {
+  currentExercises.splice(idx, 1);
+  renderExercises();
+}
+function addSet(exIdx) {
+  const last = currentExercises[exIdx].sets[currentExercises[exIdx].sets.length-1] || {};
+  currentExercises[exIdx].sets.push({ reps: last.reps || '', weight: last.weight || '' });
+  renderExercises();
+}
+function removeSet(exIdx, setIdx) {
+  currentExercises[exIdx].sets.splice(setIdx, 1);
+  if (currentExercises[exIdx].sets.length === 0) currentExercises[exIdx].sets.push({ reps: '', weight: '' });
+  renderExercises();
+}
+
+function renderExercises() {
+  const c = document.getElementById('exercises-list');
+  if (currentExercises.length === 0) {
+    c.innerHTML = '<div class="empty">Egzersiz ekle butonuna bas</div>';
+    return;
+  }
+  c.innerHTML = currentExercises.map((ex, i) => {
+    const lastWorkout = findLastExercise(ex.name);
+    const lastInfo = lastWorkout ? `<div class="help-text">Son: ${lastWorkout.sets.map(s=>`${s.weight}×${s.reps}`).join(', ')} (${lastWorkout.date})</div>` : '';
+    return `
+    <div class="exercise-block">
+      <div class="row" style="margin-bottom:8px;">
+        <input type="text" placeholder="Egzersiz adı (ör: Bench Press)" value="${ex.name}" onchange="currentExercises[${i}].name=this.value; renderExercises()">
+        <button class="delete-x" onclick="removeExercise(${i})">×</button>
+      </div>
+      ${lastInfo}
+      ${ex.sets.map((s, j) => `
+        <div class="set-row">
+          <span class="set-num">${j+1}.</span>
+          <input type="number" placeholder="kg" value="${s.weight}" onchange="currentExercises[${i}].sets[${j}].weight=parseFloat(this.value)||0" step="0.5">
+          <span style="color:#8a8a8a;">×</span>
+          <input type="number" placeholder="tekrar" value="${s.reps}" onchange="currentExercises[${i}].sets[${j}].reps=parseInt(this.value)||0">
+          <button class="delete-x small" onclick="removeSet(${i}, ${j})">×</button>
+        </div>
+      `).join('')}
+      <button class="secondary small" onclick="addSet(${i})">+ Set</button>
+    </div>`;
+  }).join('');
+}
+
+function findLastExercise(name) {
+  if (!name) return null;
+  const sorted = [...state.workouts].sort((a,b) => b.date.localeCompare(a.date));
+  for (const w of sorted) {
+    const ex = w.exercises.find(e => e.name.toLowerCase() === name.toLowerCase());
+    if (ex) return { ...ex, date: w.date };
+  }
+  return null;
+}
+
+function saveWorkout() {
+  const name = document.getElementById('workout-name').value.trim();
+  const date = document.getElementById('workout-date').value;
+  if (!date) { alert('Tarih gir'); return; }
+  if (currentExercises.length === 0) { alert('En az bir egzersiz ekle'); return; }
+  const filtered = currentExercises
+    .filter(ex => ex.name.trim())
+    .map(ex => ({
+      name: ex.name.trim(),
+      sets: ex.sets.filter(s => s.weight && s.reps).map(s => ({ weight: +s.weight, reps: +s.reps }))
+    }))
+    .filter(ex => ex.sets.length > 0);
+  if (filtered.length === 0) { alert('Geçerli set yok'); return; }
+  state.workouts.push({
+    id: Date.now(),
+    date,
+    name: name || 'Antrenman',
+    exercises: filtered
+  });
+  save();
+  currentExercises = [];
+  document.getElementById('workout-name').value = '';
+  renderExercises();
+  alert('Antrenman kaydedildi');
+  renderDashboard();
+}
+
+// ============== TEMPLATES ==============
+let templateExercises = [];
+
+function addTemplateExerciseUI() {
+  templateExercises.push({ name: '', sets: 3, reps: '8-12' });
+  renderTemplateForm();
+}
+function removeTemplateExercise(i) {
+  templateExercises.splice(i, 1);
+  renderTemplateForm();
+}
+function renderTemplateForm() {
+  const c = document.getElementById('template-exercises');
+  c.innerHTML = templateExercises.map((ex, i) => `
+    <div class="row" style="margin-bottom:6px;">
+      <input type="text" placeholder="Egzersiz" value="${ex.name}" onchange="templateExercises[${i}].name=this.value">
+      <input type="number" placeholder="Set" value="${ex.sets}" onchange="templateExercises[${i}].sets=parseInt(this.value)||3" style="max-width:80px;">
+      <input type="text" placeholder="Tekrar" value="${ex.reps}" onchange="templateExercises[${i}].reps=this.value" style="max-width:100px;">
+      <button class="delete-x" onclick="removeTemplateExercise(${i})">×</button>
+    </div>
+  `).join('');
+}
+function saveTemplate() {
+  const name = document.getElementById('template-name').value.trim();
+  if (!name) { alert('Program adı gir'); return; }
+  const valid = templateExercises.filter(e => e.name.trim());
+  if (valid.length === 0) { alert('Egzersiz ekle'); return; }
+  state.templates.push({
+    id: Date.now(),
+    name,
+    exercises: valid
+  });
+  save();
+  templateExercises = [];
+  document.getElementById('template-name').value = '';
+  renderTemplateForm();
+  renderTemplates();
+  alert('Program kaydedildi');
+}
+function deleteTemplate(id) {
+  if (!confirm('Programı sil?')) return;
+  state.templates = state.templates.filter(t => t.id !== id);
+  save();
+  renderTemplates();
+}
+function renderTemplates() {
+  const c = document.getElementById('templates-list');
+  if (state.templates.length === 0) {
+    c.innerHTML = '<div class="empty">Henüz program yok</div>';
+    return;
+  }
+  c.innerHTML = state.templates.map(t => `
+    <div class="template-card">
+      <div class="flex-between">
+        <div>
+          <div class="template-name">${t.name}</div>
+          <div class="template-meta">${t.exercises.map(e => `<span class="tag">${e.name} ${e.sets}×${e.reps}</span>`).join('')}</div>
+        </div>
+        <button class="danger small" onclick="deleteTemplate(${t.id})">Sil</button>
+      </div>
+    </div>
+  `).join('');
+}
+function renderTemplateOptions() {
+  const sel = document.getElementById('load-template');
+  sel.innerHTML = '<option value="">Program seç...</option>' +
+    state.templates.map(t => `<option value="${t.id}">${t.name}</option>`).join('');
+  if (!document.getElementById('workout-date').value) {
+    document.getElementById('workout-date').value = todayStr();
+  }
+}
+function loadTemplate() {
+  const id = parseInt(document.getElementById('load-template').value);
+  if (!id) return;
+  const t = state.templates.find(x => x.id === id);
+  if (!t) return;
+  document.getElementById('workout-name').value = t.name;
+  currentExercises = t.exercises.map(e => {
+    const setCount = parseInt(e.sets) || 3;
+    const last = findLastExercise(e.name);
+    return {
+      name: e.name,
+      sets: Array.from({ length: setCount }, (_, i) => ({
+        weight: last && last.sets[i] ? last.sets[i].weight : '',
+        reps: last && last.sets[i] ? last.sets[i].reps : ''
+      }))
+    };
+  });
+  renderExercises();
+}
+
+// ============== NUTRITION ==============
+function renderNutrition() {
+  if (!document.getElementById('nutrition-date').value) {
+    document.getElementById('nutrition-date').value = todayStr();
+  }
+  const date = document.getElementById('nutrition-date').value;
+  const meals = state.meals.filter(m => m.date === date);
+  const totals = meals.reduce((a, m) => ({
+    cal: a.cal + (m.cal||0),
+    pro: a.pro + (m.pro||0),
+    carb: a.carb + (m.carb||0),
+    fat: a.fat + (m.fat||0)
+  }), { cal:0, pro:0, carb:0, fat:0 });
+
+  const macros = [
+    { label: 'Kalori', val: totals.cal, goal: state.goals.cal, unit: 'kcal' },
+    { label: 'Protein', val: totals.pro, goal: state.goals.pro, unit: 'g' },
+    { label: 'Karb', val: totals.carb, goal: state.goals.carb, unit: 'g' },
+    { label: 'Yağ', val: totals.fat, goal: state.goals.fat, unit: 'g' }
+  ];
+  document.getElementById('nutrition-macros').innerHTML = macros.map(m => {
+    const pct = m.goal > 0 ? Math.min(100, (m.val/m.goal)*100) : 0;
+    const over = m.val > m.goal;
+    return `
+      <div class="stat">
+        <div class="stat-label">${m.label}</div>
+        <div class="stat-value">${fmt(m.val,0)} <span style="font-size:12px;color:#8a8a8a;">/ ${m.goal} ${m.unit}</span></div>
+        <div class="progress-bar"><div class="progress-fill ${over?'over':''}" style="width:${pct}%"></div></div>
+      </div>`;
+  }).join('');
+
+  const grouped = {};
+  meals.forEach(m => {
+    if (!grouped[m.type]) grouped[m.type] = [];
+    grouped[m.type].push(m);
+  });
+  const c = document.getElementById('meals-list');
+  if (meals.length === 0) {
+    c.innerHTML = '<div class="empty">Bu güne öğün eklenmedi</div>';
+    return;
+  }
+  c.innerHTML = Object.entries(grouped).map(([type, items]) => `
+    <div style="margin-bottom:12px;">
+      <div style="font-weight:500; font-size:13px; margin-bottom:6px; color:#5DCAA5;">${type}</div>
+      ${items.map(m => {
+        // Eski meal'lerde grams alanı olabilir, geriye uyumluluk
+        let displayAmount = '';
+        if (m.amount && m.unit) {
+          displayAmount = `(${m.amount} ${m.unit === 'g' ? 'g' : m.unit})`;
+        } else if (m.grams) {
+          displayAmount = `(${m.grams}g)`;
+        }
+        return `
+        <div class="food-item">
+          <div>
+            <div>${m.name} ${displayAmount ? `<span style="color:#8a8a8a;">${displayAmount}</span>` : ''}</div>
+            <div class="macro-row">
+              <span>${fmt(m.cal,0)} kcal · P:${fmt(m.pro)} K:${fmt(m.carb)} Y:${fmt(m.fat)}</span>
+            </div>
+          </div>
+          <button class="delete-x" onclick="deleteMeal(${m.id})">×</button>
+        </div>`;
+      }).join('')}
+    </div>
+  `).join('');
+}
+
+function addMeal() {
+  const date = document.getElementById('nutrition-date').value || todayStr();
+  const name = document.getElementById('meal-name').value.trim();
+  if (!name) { alert('Besin adı gir'); return; }
+  const amount = parseFloat(document.getElementById('meal-amount').value) || null;
+  const unit = document.getElementById('meal-unit').value;
+  const cal = parseFloat(document.getElementById('meal-cal').value) || 0;
+  const pro = parseFloat(document.getElementById('meal-pro').value) || 0;
+  const carb = parseFloat(document.getElementById('meal-carb').value) || 0;
+  const fat = parseFloat(document.getElementById('meal-fat').value) || 0;
+  if (cal === 0 && pro === 0 && carb === 0 && fat === 0) {
+    if (!confirm('Tüm makro değerleri 0. Yine de eklensin mi?')) return;
+  }
+  state.meals.push({
+    id: Date.now(),
+    date, name, amount, unit,
+    type: document.getElementById('meal-type').value,
+    cal, pro, carb, fat
+  });
+  save();
+  ['meal-name','meal-amount','meal-cal','meal-pro','meal-carb','meal-fat'].forEach(id => document.getElementById(id).value = '');
+  clearFoodLink();
+  document.getElementById('food-search-results').innerHTML = '';
+  renderNutrition();
+}
+
+function deleteMeal(id) {
+  state.meals = state.meals.filter(m => m.id !== id);
+  save();
+  renderNutrition();
+}
+
+function searchFood() {
+  const q = document.getElementById('food-search').value.toLowerCase().trim();
+  const c = document.getElementById('food-search-results');
+  if (!q) { c.innerHTML = ''; return; }
+  // Türkçe karakter normalizasyonu (i ve İ farkını da gider)
+  const normalize = s => s.toLowerCase()
+    .replace(/ı/g,'i').replace(/ş/g,'s').replace(/ğ/g,'g')
+    .replace(/ü/g,'u').replace(/ö/g,'o').replace(/ç/g,'c').replace(/İ/g,'i');
+  const qn = normalize(q);
+  const matches = state.foodDB
+    .filter(f => normalize(f.name).includes(qn))
+    .slice(0, 8);
+  if (matches.length === 0) { c.innerHTML = '<div class="help-text">Eşleşme yok, manuel ekleyebilirsin</div>'; return; }
+  c.innerHTML = matches.map(f => {
+    const baseAmount = f.baseAmount || 100;
+    const unit = f.unit || 'g';
+    const unitLabel = unit === 'g' ? 'g' : ' ' + unit;
+    return `
+      <div class="food-item" onclick="selectFood(${f.id})">
+        <div>
+          <div>${f.name}</div>
+          <div class="macro-row">
+            <span>${baseAmount}${unitLabel}: ${fmt(f.cal,0)}k · P${fmt(f.pro)} K${fmt(f.carb)} Y${fmt(f.fat)}</span>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function selectFood(id) {
+  const f = state.foodDB.find(x => x.id === id);
+  if (!f) return;
+  // Form'a doldur, prompt'a hiç gitme
+  document.getElementById('meal-name').value = f.name;
+  const unit = f.unit || 'g';
+  const baseAmount = f.baseAmount || 100;
+  document.getElementById('meal-amount').value = baseAmount;
+  document.getElementById('meal-unit').value = unit;
+  // Bu seçili besinin temel değerlerini sakla, miktar değişince hesaplayacağız
+  document.getElementById('meal-name').dataset.foodId = f.id;
+  document.getElementById('meal-name').dataset.baseCal = f.cal;
+  document.getElementById('meal-name').dataset.basePro = f.pro;
+  document.getElementById('meal-name').dataset.baseCarb = f.carb;
+  document.getElementById('meal-name').dataset.baseFat = f.fat;
+  document.getElementById('meal-name').dataset.baseAmount = baseAmount;
+  recalcMealMacros();
+  document.getElementById('food-search').value = '';
+  document.getElementById('food-search-results').innerHTML = '';
+  // Miktar inputuna fokuslan
+  document.getElementById('meal-amount').focus();
+  document.getElementById('meal-amount').select();
+}
+
+// Miktar değişince makroları otomatik hesapla
+function recalcMealMacros() {
+  const nameEl = document.getElementById('meal-name');
+  const baseAmount = parseFloat(nameEl.dataset.baseAmount);
+  if (!baseAmount) return; // DB'den seçilmemiş, manuel giriş, dokunma
+  const amount = parseFloat(document.getElementById('meal-amount').value) || 0;
+  const ratio = amount / baseAmount;
+  document.getElementById('meal-cal').value = fmt(parseFloat(nameEl.dataset.baseCal) * ratio, 1);
+  document.getElementById('meal-pro').value = fmt(parseFloat(nameEl.dataset.basePro) * ratio, 2);
+  document.getElementById('meal-carb').value = fmt(parseFloat(nameEl.dataset.baseCarb) * ratio, 2);
+  document.getElementById('meal-fat').value = fmt(parseFloat(nameEl.dataset.baseFat) * ratio, 2);
+}
+
+// Manuel ad değişince DB bağlantısını kopar
+function clearFoodLink() {
+  const nameEl = document.getElementById('meal-name');
+  delete nameEl.dataset.foodId;
+  delete nameEl.dataset.baseCal;
+  delete nameEl.dataset.basePro;
+  delete nameEl.dataset.baseCarb;
+  delete nameEl.dataset.baseFat;
+  delete nameEl.dataset.baseAmount;
+}
+
+function saveToFoodDB() {
+  const name = document.getElementById('meal-name').value.trim();
+  const amount = parseFloat(document.getElementById('meal-amount').value);
+  const unit = document.getElementById('meal-unit').value;
+  if (!name || !amount) { alert('Besin adı ve miktar gerekli'); return; }
+  // Aynı isimli besin var mı kontrol et
+  const existing = state.foodDB.find(f => f.name.toLowerCase() === name.toLowerCase() && !f.builtIn);
+  if (existing) {
+    if (!confirm(`"${name}" zaten kayıtlı. Üzerine yazılsın mı?`)) return;
+    state.foodDB = state.foodDB.filter(f => f.id !== existing.id);
+  }
+  state.foodDB.push({
+    id: Date.now(),
+    name,
+    cal: parseFloat(document.getElementById('meal-cal').value) || 0,
+    pro: parseFloat(document.getElementById('meal-pro').value) || 0,
+    carb: parseFloat(document.getElementById('meal-carb').value) || 0,
+    fat: parseFloat(document.getElementById('meal-fat').value) || 0,
+    unit,
+    baseAmount: amount
+  });
+  save();
+  alert(`${name} (${amount} ${unit}) veritabanına kaydedildi`);
+}
+
+// ============== FOOD DB ==============
+function addToFoodDB() {
+  const name = document.getElementById('db-name').value.trim();
+  if (!name) return;
+  state.foodDB.push({
+    id: Date.now(),
+    name,
+    cal: parseFloat(document.getElementById('db-cal').value)||0,
+    pro: parseFloat(document.getElementById('db-pro').value)||0,
+    carb: parseFloat(document.getElementById('db-carb').value)||0,
+    fat: parseFloat(document.getElementById('db-fat').value)||0
+  });
+  save();
+  ['db-name','db-cal','db-pro','db-carb','db-fat'].forEach(id => document.getElementById(id).value = '');
+  renderFoodDB();
+}
+function deleteFood(id) {
+  state.foodDB = state.foodDB.filter(f => f.id !== id);
+  save();
+  renderFoodDB();
+}
+function renderFoodDB() {
+  const c = document.getElementById('food-db-list');
+  if (state.foodDB.length === 0) {
+    c.innerHTML = '<div class="empty">Henüz besin yok</div>';
+    return;
+  }
+  const filter = (document.getElementById('food-db-filter')?.value || '').toLowerCase().trim();
+  const showOnly = document.getElementById('food-db-show')?.value || 'all';
+
+  let filtered = state.foodDB;
+  if (showOnly === 'custom') filtered = filtered.filter(f => !f.builtIn);
+  if (showOnly === 'builtin') filtered = filtered.filter(f => f.builtIn);
+  if (filter) filtered = filtered.filter(f => f.name.toLowerCase().includes(filter));
+
+  const sorted = [...filtered].sort((a,b) => a.name.localeCompare(b.name, 'tr'));
+  const customCount = state.foodDB.filter(f => !f.builtIn).length;
+  const builtInCount = state.foodDB.filter(f => f.builtIn).length;
+
+  c.innerHTML = `
+    <div style="margin-bottom:8px; font-size:12px; color:#8a8a8a;">
+      Toplam ${state.foodDB.length} besin (${builtInCount} hazır, ${customCount} senin) · Gösterilen: ${sorted.length}
+    </div>
+    <table>
+      <thead><tr><th>Besin</th><th>Kal</th><th>Pro</th><th>Karb</th><th>Yağ</th><th></th></tr></thead>
+      <tbody>
+        ${sorted.map(f => `
+          <tr>
+            <td>${f.name}${f.builtIn ? ' <span class="tag">hazır</span>' : ''}</td>
+            <td>${fmt(f.cal,0)}</td>
+            <td>${fmt(f.pro)}</td>
+            <td>${fmt(f.carb)}</td>
+            <td>${fmt(f.fat)}</td>
+            <td>${!f.builtIn ? `<button class="delete-x" onclick="deleteFood(${f.id})">×</button>` : ''}</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>`;
+}
+
+// ============== BODY ==============
+function saveBody() {
+  const date = document.getElementById('body-date').value;
+  if (!date) { alert('Tarih gir'); return; }
+  const entry = {
+    id: Date.now(),
+    date,
+    weight: parseFloat(document.getElementById('body-weight').value) || null,
+    waist: parseFloat(document.getElementById('body-waist').value) || null,
+    chest: parseFloat(document.getElementById('body-chest').value) || null,
+    arm: parseFloat(document.getElementById('body-arm').value) || null,
+    leg: parseFloat(document.getElementById('body-leg').value) || null,
+    fat: parseFloat(document.getElementById('body-fat').value) || null
+  };
+  state.body.push(entry);
+  save();
+  ['body-weight','body-waist','body-chest','body-arm','body-leg','body-fat'].forEach(id => document.getElementById(id).value = '');
+  renderBody();
+}
+function deleteBody(id) {
+  state.body = state.body.filter(b => b.id !== id);
+  save();
+  renderBody();
+}
+function renderBody() {
+  if (!document.getElementById('body-date').value) {
+    document.getElementById('body-date').value = todayStr();
+  }
+  const c = document.getElementById('body-list');
+  if (state.body.length === 0) {
+    c.innerHTML = '<div class="empty">Henüz ölçüm yok</div>';
+    return;
+  }
+  const sorted = [...state.body].sort((a,b) => b.date.localeCompare(a.date));
+  c.innerHTML = `
+    <table>
+      <thead><tr><th>Tarih</th><th>Kilo</th><th>Bel</th><th>Göğüs</th><th>Kol</th><th>Bacak</th><th>Yağ%</th><th></th></tr></thead>
+      <tbody>
+        ${sorted.map(b => `
+          <tr>
+            <td>${b.date}</td>
+            <td>${b.weight ?? '-'}</td>
+            <td>${b.waist ?? '-'}</td>
+            <td>${b.chest ?? '-'}</td>
+            <td>${b.arm ?? '-'}</td>
+            <td>${b.leg ?? '-'}</td>
+            <td>${b.fat ?? '-'}</td>
+            <td><button class="delete-x" onclick="deleteBody(${b.id})">×</button></td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>`;
+}
+
+// ============== PROGRESS ==============
+function getAllExerciseNames() {
+  const set = new Set();
+  state.workouts.forEach(w => w.exercises.forEach(e => set.add(e.name)));
+  return [...set].sort((a,b) => a.localeCompare(b, 'tr'));
+}
+
+function renderExerciseOptions() {
+  const sel = document.getElementById('progress-exercise');
+  const current = sel.value;
+  sel.innerHTML = '<option value="">Egzersiz seç...</option>' +
+    getAllExerciseNames().map(n => `<option value="${n}" ${n===current?'selected':''}>${n}</option>`).join('');
+}
+
+function epley(weight, reps) {
+  if (!reps) return 0;
+  return weight * (1 + reps / 30);
+}
+
+function getExerciseHistory(name) {
+  const data = [];
+  state.workouts.forEach(w => {
+    w.exercises.forEach(e => {
+      if (e.name.toLowerCase() === name.toLowerCase()) {
+        const sets = e.sets;
+        const oneRMs = sets.map(s => epley(s.weight, s.reps));
+        const volumes = sets.map(s => s.weight * s.reps);
+        data.push({
+          date: w.date,
+          maxWeight: Math.max(...sets.map(s => s.weight)),
+          oneRM: Math.max(...oneRMs),
+          topVolume: Math.max(...volumes),
+          totalVolume: volumes.reduce((a,b) => a+b, 0)
+        });
+      }
+    });
+  });
+  return data.sort((a,b) => a.date.localeCompare(b.date));
+}
+
+let progressChart = null;
+function renderProgressChart() {
+  const name = document.getElementById('progress-exercise').value;
+  const metric = document.getElementById('progress-metric').value;
+  if (!name) return;
+  const data = getExerciseHistory(name);
+  const labels = data.map(d => d.date);
+  const metricMap = { '1rm': 'oneRM', 'topVolume': 'topVolume', 'totalVolume': 'totalVolume', 'maxWeight': 'maxWeight' };
+  const metricLabels = { '1rm': 'Tahmini 1RM (kg)', 'topVolume': 'En ağır set hacmi', 'totalVolume': 'Toplam hacim (kg)', 'maxWeight': 'Max ağırlık (kg)' };
+  const values = data.map(d => Math.round(d[metricMap[metric]] * 10) / 10);
+
+  if (progressChart) progressChart.destroy();
+  const ctx = document.getElementById('progress-chart');
+  progressChart = new Chart(ctx, {
+    type: 'line',
+    data: { labels, datasets: [{ label: metricLabels[metric], data: values, borderColor: '#5DCAA5', backgroundColor: 'rgba(93,202,165,0.1)', tension: 0.2, fill: true, pointRadius: 4 }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#ccc' } } }, scales: { x: { ticks: { color: '#8a8a8a' }, grid: { color: '#2a2d35' } }, y: { ticks: { color: '#8a8a8a' }, grid: { color: '#2a2d35' } } } }
+  });
+}
+
+let weightChart = null;
+function renderWeightChart() {
+  const data = state.body.filter(b => b.weight).sort((a,b) => a.date.localeCompare(b.date));
+  if (data.length === 0) return;
+  if (weightChart) weightChart.destroy();
+  const ctx = document.getElementById('weight-chart');
+  weightChart = new Chart(ctx, {
+    type: 'line',
+    data: { labels: data.map(d => d.date), datasets: [{ label: 'Kilo (kg)', data: data.map(d => d.weight), borderColor: '#7F77DD', backgroundColor: 'rgba(127,119,221,0.1)', tension: 0.2, fill: true, pointRadius: 4 }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#ccc' } } }, scales: { x: { ticks: { color: '#8a8a8a' }, grid: { color: '#2a2d35' } }, y: { ticks: { color: '#8a8a8a' }, grid: { color: '#2a2d35' } } } }
+  });
+}
+
+function renderPRs() {
+  const names = getAllExerciseNames();
+  const c = document.getElementById('pr-list');
+  if (names.length === 0) { c.innerHTML = '<div class="empty">Henüz antrenman yok</div>'; return; }
+  const prs = names.map(n => {
+    const h = getExerciseHistory(n);
+    const maxW = Math.max(...h.map(d => d.maxWeight));
+    const max1RM = Math.max(...h.map(d => d.oneRM));
+    return { name: n, maxW, max1RM };
+  }).sort((a,b) => b.max1RM - a.max1RM);
+  c.innerHTML = `
+    <table>
+      <thead><tr><th>Egzersiz</th><th>Max ağırlık</th><th>Tahmini 1RM</th></tr></thead>
+      <tbody>
+        ${prs.map(p => `<tr><td>${p.name}</td><td>${fmt(p.maxW,1)} kg</td><td>${fmt(p.max1RM,1)} kg</td></tr>`).join('')}
+      </tbody>
+    </table>`;
+}
+
+// ============== DASHBOARD ==============
+function renderDashboard() {
+  const today = todayStr();
+  document.getElementById('today-date').textContent = today;
+  const meals = state.meals.filter(m => m.date === today);
+  const totals = meals.reduce((a, m) => ({
+    cal: a.cal + (m.cal||0), pro: a.pro + (m.pro||0), carb: a.carb + (m.carb||0), fat: a.fat + (m.fat||0)
+  }), { cal:0, pro:0, carb:0, fat:0 });
+  const macros = [
+    { label: 'Kalori', val: totals.cal, goal: state.goals.cal, unit: 'kcal' },
+    { label: 'Protein', val: totals.pro, goal: state.goals.pro, unit: 'g' },
+    { label: 'Karb', val: totals.carb, goal: state.goals.carb, unit: 'g' },
+    { label: 'Yağ', val: totals.fat, goal: state.goals.fat, unit: 'g' }
+  ];
+  document.getElementById('today-macros').innerHTML = macros.map(m => {
+    const pct = m.goal > 0 ? Math.min(100, (m.val/m.goal)*100) : 0;
+    const over = m.val > m.goal;
+    return `
+      <div class="stat">
+        <div class="stat-label">${m.label}</div>
+        <div class="stat-value">${fmt(m.val,0)} <span style="font-size:12px;color:#8a8a8a;">/ ${m.goal}</span></div>
+        <div class="progress-bar"><div class="progress-fill ${over?'over':''}" style="width:${pct}%"></div></div>
+      </div>`;
+  }).join('');
+
+  const recent = [...state.workouts].sort((a,b) => b.date.localeCompare(a.date)).slice(0, 5);
+  document.getElementById('recent-workouts').innerHTML = recent.length === 0
+    ? '<div class="empty">Henüz antrenman yok</div>'
+    : recent.map(w => `
+      <div style="padding:8px 0; border-bottom:1px solid #1a1c22;">
+        <div style="font-weight:500; font-size:14px;">${w.name}</div>
+        <div class="help-text">${w.date} · ${w.exercises.length} egzersiz · ${w.exercises.reduce((a,e)=>a+e.sets.length,0)} set</div>
+      </div>`).join('');
+
+  const bodyData = [...state.body].filter(b => b.weight).sort((a,b) => b.date.localeCompare(a.date));
+  if (bodyData.length === 0) {
+    document.getElementById('weight-summary').innerHTML = '<div class="empty">Vücut sekmesinden ilk ölçümünü ekle</div>';
+  } else {
+    const latest = bodyData[0];
+    const week = bodyData.find(b => {
+      const diff = (new Date(latest.date) - new Date(b.date)) / (1000*60*60*24);
+      return diff >= 7;
+    });
+    const change = week ? (latest.weight - week.weight).toFixed(1) : null;
+    document.getElementById('weight-summary').innerHTML = `
+      <div class="stat-value">${latest.weight} kg</div>
+      <div class="help-text">Son ölçüm: ${latest.date}</div>
+      ${change !== null ? `<div class="stat-sub" style="color:${change>0?'#F0997B':'#5DCAA5'};">${change>0?'+':''}${change} kg / hafta</div>` : ''}
+    `;
+  }
+}
+
+// ============== SETTINGS ==============
+function loadGoals() {
+  document.getElementById('goal-cal').value = state.goals.cal;
+  document.getElementById('goal-pro').value = state.goals.pro;
+  document.getElementById('goal-carb').value = state.goals.carb;
+  document.getElementById('goal-fat').value = state.goals.fat;
+}
+function saveGoals() {
+  state.goals = {
+    cal: parseInt(document.getElementById('goal-cal').value)||0,
+    pro: parseInt(document.getElementById('goal-pro').value)||0,
+    carb: parseInt(document.getElementById('goal-carb').value)||0,
+    fat: parseInt(document.getElementById('goal-fat').value)||0
+  };
+  save();
+  alert('Hedefler kaydedildi');
+}
+
+// Beslenme sekmesinden hızlı hedef düzenleme
+function toggleGoalsEdit() {
+  const panel = document.getElementById('goals-edit-panel');
+  const isHidden = panel.style.display === 'none';
+  panel.style.display = isHidden ? 'block' : 'none';
+  if (isHidden) {
+    document.getElementById('quick-goal-cal').value = state.goals.cal;
+    document.getElementById('quick-goal-pro').value = state.goals.pro;
+    document.getElementById('quick-goal-carb').value = state.goals.carb;
+    document.getElementById('quick-goal-fat').value = state.goals.fat;
+  }
+}
+function saveQuickGoals() {
+  state.goals = {
+    cal: parseInt(document.getElementById('quick-goal-cal').value)||0,
+    pro: parseInt(document.getElementById('quick-goal-pro').value)||0,
+    carb: parseInt(document.getElementById('quick-goal-carb').value)||0,
+    fat: parseInt(document.getElementById('quick-goal-fat').value)||0
+  };
+  save();
+  document.getElementById('goals-edit-panel').style.display = 'none';
+  renderNutrition();
+  renderDashboard();
+}
+function exportData() {
+  const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `fitness-${todayStr()}.json`;
+  a.click();
+}
+function importData(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      if (confirm('Mevcut veriler değiştirilecek, devam edilsin mi?')) {
+        state = { ...state, ...data };
+        save();
+        location.reload();
+      }
+    } catch(err) { alert('Geçersiz dosya'); }
+  };
+  reader.readAsText(file);
+}
+function clearAll() {
+  if (!confirm('TÜM veriler silinecek. Emin misin?')) return;
+  if (!confirm('Son uyarı: bu işlem geri alınamaz')) return;
+  localStorage.removeItem(STORAGE_KEY);
+  location.reload();
+}
+
+// ============== INIT ==============
+load();
+document.getElementById('workout-date').value = todayStr();
+document.getElementById('nutrition-date').value = todayStr();
+document.getElementById('body-date').value = todayStr();
+renderDashboard();
+</script>
+</body>
+</html>
