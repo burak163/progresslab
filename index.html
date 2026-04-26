@@ -2,70 +2,331 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kişisel Fitness ve Beslenme Takip</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#f5f3ee">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>Fitness ve Beslenme</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: #0f1115;
-  color: #e8e8e8;
-  min-height: 100vh;
-  padding: 16px;
+
+:root {
+  --bg: #f5f3ee;
+  --surface: #ffffff;
+  --surface-alt: #faf8f3;
+  --border: #ebe6dc;
+  --text: #1a1d1a;
+  --text-muted: #707570;
+  --text-soft: #9ba09b;
+  --accent: #2d8f5f;
+  --accent-soft: #c8e6d5;
+  --accent-bg: #e8f3ec;
+  --warn: #d4734a;
+  --danger: #c54a3f;
+  --carb: #e8a948;
+  --protein: #8b7fd1;
+  --fat: #d4734a;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 2px 8px rgba(0,0,0,0.06);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --radius-lg: 24px;
+}
+
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
   font-size: 15px;
   line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
 }
-.container { max-width: 1100px; margin: 0 auto; }
-h1 {
-  font-size: 22px;
-  font-weight: 500;
-  margin-bottom: 4px;
-  color: #fff;
+
+body {
+  min-height: 100vh;
+  padding-bottom: 90px;
 }
-.subtitle {
-  color: #8a8a8a;
-  font-size: 13px;
-  margin-bottom: 20px;
+
+.container {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 16px;
 }
-.tabs {
+
+@media (min-width: 768px) {
+  .container { max-width: 720px; padding: 24px; }
+}
+
+/* HEADER */
+.app-header {
   display: flex;
-  gap: 4px;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 20px;
-  border-bottom: 1px solid #2a2d35;
-  overflow-x: auto;
+  padding: 4px 0;
+}
+.app-title {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+}
+.app-subtitle {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* BOTTOM TAB BAR */
+.tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-around;
+  padding: 8px 4px calc(8px + env(safe-area-inset-bottom));
+  z-index: 100;
 }
 .tab {
-  padding: 10px 16px;
+  flex: 1;
   background: transparent;
   border: none;
-  color: #8a8a8a;
+  padding: 8px 4px;
   cursor: pointer;
-  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  color: var(--text-soft);
+  font-size: 11px;
   font-weight: 500;
-  white-space: nowrap;
-  border-bottom: 2px solid transparent;
-  transition: all 0.15s;
+  transition: color 0.15s;
 }
-.tab:hover { color: #ccc; }
-.tab.active {
-  color: #fff;
-  border-bottom-color: #5DCAA5;
-}
-.panel { display: none; }
-.panel.active { display: block; }
+.tab svg { width: 22px; height: 22px; stroke-width: 2; }
+.tab.active { color: var(--accent); }
+.tab:hover { color: var(--text); }
+
+/* CARDS */
 .card {
-  background: #181b22;
-  border: 1px solid #2a2d35;
-  border-radius: 10px;
-  padding: 16px;
-  margin-bottom: 16px;
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 18px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow-sm);
 }
 .card-title {
-  font-size: 15px;
-  font-weight: 500;
-  margin-bottom: 12px;
-  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 14px;
+  letter-spacing: -0.2px;
 }
+.card-subtitle {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: -10px;
+  margin-bottom: 14px;
+}
+
+/* PANELS */
+.panel { display: none; }
+.panel.active { display: block; animation: fadeIn 0.2s; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+/* CALORIE RING */
+.ring-card {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: 24px 18px;
+  margin-bottom: 14px;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+}
+.ring-wrapper {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  margin: 8px auto 16px;
+}
+.ring-wrapper svg { transform: rotate(-90deg); }
+.ring-bg { fill: none; stroke: var(--border); stroke-width: 14; }
+.ring-fill {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 14;
+  stroke-linecap: round;
+  transition: stroke-dasharray 0.5s ease;
+}
+.ring-fill.over { stroke: var(--warn); }
+.ring-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+.ring-value {
+  font-size: 38px;
+  font-weight: 700;
+  letter-spacing: -1px;
+  line-height: 1;
+}
+.ring-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+}
+.ring-goal {
+  font-size: 13px;
+  color: var(--text-soft);
+  margin-top: 2px;
+}
+
+/* MACRO PILLS UNDER RING */
+.macro-pills {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 4px;
+}
+.macro-pill {
+  text-align: center;
+}
+.macro-pill-bar {
+  height: 6px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+.macro-pill-fill { height: 100%; border-radius: 3px; transition: width 0.4s; }
+.macro-pill-fill.protein { background: var(--protein); }
+.macro-pill-fill.carb { background: var(--carb); }
+.macro-pill-fill.fat { background: var(--fat); }
+.macro-pill-name {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  font-weight: 600;
+}
+.macro-pill-val {
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: 2px;
+}
+.macro-pill-val span { color: var(--text-soft); font-weight: 400; font-size: 12px; }
+
+/* MEAL SECTIONS (Lifesum-style) */
+.meal-section {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: var(--shadow-sm);
+}
+.meal-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.meal-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+.meal-icon.kahvalti { background: #fef3e2; color: #d4734a; }
+.meal-icon.ogle { background: #e8f3ec; color: #2d8f5f; }
+.meal-icon.aksam { background: #ede9f7; color: #8b7fd1; }
+.meal-icon.atistirmalik { background: #fbe9e7; color: #c54a3f; }
+.meal-title {
+  font-size: 15px;
+  font-weight: 600;
+  flex: 1;
+}
+.meal-cal {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.meal-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-top: 1px solid var(--border);
+  gap: 10px;
+}
+.meal-item-info { flex: 1; min-width: 0; }
+.meal-item-name {
+  font-size: 14px;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.meal-item-detail {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+.meal-item-cal {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.meal-empty {
+  text-align: center;
+  padding: 14px;
+  color: var(--text-soft);
+  font-size: 13px;
+  background: var(--surface-alt);
+  border-radius: var(--radius-sm);
+  border: 1px dashed var(--border);
+}
+
+/* INPUTS */
+.field { margin-bottom: 12px; }
+.field-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 6px;
+}
+input[type="text"], input[type="number"], input[type="date"], select, textarea {
+  width: 100%;
+  background: var(--surface-alt);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 11px 14px;
+  color: var(--text);
+  font-size: 15px;
+  font-family: inherit;
+  transition: border-color 0.15s, background 0.15s;
+}
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  background: var(--surface);
+}
+input::placeholder { color: var(--text-soft); }
+
 .row {
   display: flex;
   gap: 8px;
@@ -73,286 +334,354 @@ h1 {
   flex-wrap: wrap;
 }
 .row > * { flex: 1; min-width: 100px; }
-input, select, textarea {
-  background: #0f1115;
-  border: 1px solid #2a2d35;
-  border-radius: 6px;
-  padding: 8px 10px;
-  color: #e8e8e8;
+
+/* BUTTONS */
+button {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 11px 18px;
+  font-weight: 600;
   font-size: 14px;
   font-family: inherit;
-  width: 100%;
-}
-input:focus, select:focus, textarea:focus {
-  outline: none;
-  border-color: #5DCAA5;
-}
-label {
-  display: block;
-  font-size: 12px;
-  color: #8a8a8a;
-  margin-bottom: 4px;
-  font-weight: 500;
-}
-button {
-  background: #5DCAA5;
-  color: #04342C;
-  border: none;
-  border-radius: 6px;
-  padding: 8px 14px;
-  font-weight: 500;
   cursor: pointer;
-  font-size: 14px;
-  transition: opacity 0.15s;
+  transition: opacity 0.15s, transform 0.05s;
+  letter-spacing: -0.1px;
 }
-button:hover { opacity: 0.85; }
+button:hover { opacity: 0.9; }
+button:active { transform: scale(0.98); }
 button.secondary {
-  background: #2a2d35;
-  color: #e8e8e8;
+  background: var(--surface-alt);
+  color: var(--text);
+  border: 1.5px solid var(--border);
 }
-button.danger {
-  background: #501313;
-  color: #F7C1C1;
-}
-button.small {
-  padding: 4px 10px;
-  font-size: 12px;
-}
-.grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
-.grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
-.stat {
-  background: #0f1115;
-  border: 1px solid #2a2d35;
-  border-radius: 8px;
-  padding: 12px;
-}
-.stat-label {
-  font-size: 11px;
-  color: #8a8a8a;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 4px;
-}
-.stat-value {
-  font-size: 20px;
-  font-weight: 500;
-  color: #fff;
-}
-.stat-sub {
-  font-size: 11px;
-  color: #5DCAA5;
-  margin-top: 2px;
-}
-table {
-  width: 100%;
-  border-collapse: collapse;
+button.danger { background: var(--danger); }
+button.ghost {
+  background: transparent;
+  color: var(--accent);
+  padding: 6px 10px;
   font-size: 13px;
 }
+button.small { padding: 6px 12px; font-size: 13px; }
+button.icon-btn {
+  background: transparent;
+  color: var(--text-soft);
+  padding: 6px;
+  font-size: 18px;
+  line-height: 1;
+}
+button.icon-btn:hover { color: var(--danger); }
+
+button.fab {
+  background: var(--accent);
+  color: #fff;
+  width: 100%;
+  padding: 14px;
+  font-size: 15px;
+  border-radius: var(--radius-sm);
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* TABLES */
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
 th {
   text-align: left;
-  padding: 8px;
-  border-bottom: 1px solid #2a2d35;
-  color: #8a8a8a;
-  font-weight: 500;
-  font-size: 12px;
+  padding: 10px 8px;
+  border-bottom: 1.5px solid var(--border);
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 11px;
   text-transform: uppercase;
+  letter-spacing: 0.4px;
 }
-td {
-  padding: 8px;
-  border-bottom: 1px solid #1a1c22;
-}
-tr:hover td { background: #0f1115; }
+td { padding: 10px 8px; border-bottom: 1px solid var(--border); }
+tr:last-child td { border-bottom: none; }
+
+/* PROGRESS BARS */
 .progress-bar {
   height: 6px;
-  background: #2a2d35;
+  background: var(--border);
   border-radius: 3px;
   overflow: hidden;
   margin-top: 6px;
 }
 .progress-fill {
   height: 100%;
-  background: #5DCAA5;
-  transition: width 0.3s;
+  background: var(--accent);
+  transition: width 0.4s;
+  border-radius: 3px;
 }
-.progress-fill.over { background: #E24B4A; }
+.progress-fill.over { background: var(--warn); }
+
+/* WORKOUT EXERCISE BLOCKS */
 .exercise-block {
-  background: #0f1115;
-  border: 1px solid #2a2d35;
-  border-radius: 8px;
-  padding: 12px;
-  margin-bottom: 8px;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  margin-bottom: 10px;
 }
+.exercise-header {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.exercise-header input { flex: 1; background: var(--surface); }
 .set-row {
   display: flex;
   gap: 6px;
   align-items: center;
-  margin-bottom: 4px;
-  font-size: 13px;
-}
-.set-row input { padding: 4px 8px; font-size: 13px; }
-.set-num {
-  width: 24px;
-  color: #8a8a8a;
-  font-size: 12px;
-}
-.empty {
-  text-align: center;
-  color: #8a8a8a;
-  padding: 24px;
-  font-size: 13px;
-}
-.template-card {
-  background: #0f1115;
-  border: 1px solid #2a2d35;
-  border-radius: 8px;
-  padding: 12px;
-  margin-bottom: 8px;
-  cursor: pointer;
-  transition: border-color 0.15s;
-}
-.template-card:hover { border-color: #5DCAA5; }
-.template-name { font-weight: 500; font-size: 14px; margin-bottom: 4px; }
-.template-meta { font-size: 12px; color: #8a8a8a; }
-.flex-between { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-.badge {
-  display: inline-block;
-  background: #1a4d3e;
-  color: #5DCAA5;
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-size: 11px;
-  font-weight: 500;
-}
-.food-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px;
-  border-bottom: 1px solid #1a1c22;
-  font-size: 13px;
-  cursor: pointer;
-}
-.food-item:hover { background: #0f1115; }
-.macro-row {
-  display: flex;
-  justify-content: space-between;
-  font-size: 12px;
-  color: #8a8a8a;
-  margin-top: 2px;
-}
-.delete-x {
-  background: transparent;
-  color: #8a8a8a;
-  padding: 2px 6px;
+  margin-bottom: 6px;
   font-size: 14px;
 }
-.delete-x:hover { color: #E24B4A; }
-canvas { max-width: 100%; }
-.chart-container {
-  position: relative;
-  height: 280px;
-  margin-top: 12px;
+.set-row input { padding: 8px 10px; font-size: 14px; background: var(--surface); }
+.set-num {
+  width: 26px;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
 }
-.section-divider {
-  height: 1px;
-  background: #2a2d35;
-  margin: 16px 0;
+.last-info {
+  font-size: 12px;
+  color: var(--accent);
+  background: var(--accent-bg);
+  padding: 6px 10px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+/* TEMPLATES */
+.template-card {
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+}
+.template-card-info { flex: 1; min-width: 0; }
+.template-name { font-weight: 600; font-size: 15px; margin-bottom: 6px; }
+.template-meta {
+  font-size: 12px;
+  color: var(--text-muted);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
 }
 .tag {
   display: inline-block;
   font-size: 11px;
-  padding: 2px 6px;
-  background: #2a2d35;
-  border-radius: 4px;
-  color: #ccc;
-  margin-right: 4px;
+  padding: 3px 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text-muted);
+  font-weight: 500;
 }
-.help-text {
-  font-size: 12px;
-  color: #8a8a8a;
-  margin-top: 4px;
+
+/* SEARCH RESULTS */
+.search-results {
+  margin-top: 6px;
+  background: var(--surface);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
 }
-@media (max-width: 600px) {
-  .row { flex-direction: column; }
-  .row > * { min-width: 100%; }
+.search-result {
+  padding: 12px 14px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.1s;
+}
+.search-result:hover, .search-result:active { background: var(--surface-alt); }
+.search-result:last-child { border-bottom: none; }
+.search-result-name { font-size: 14px; font-weight: 500; margin-bottom: 3px; }
+.search-result-detail { font-size: 12px; color: var(--text-muted); }
+
+/* STATS */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+.stat {
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+}
+.stat-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.stat-value { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
+.stat-sub { font-size: 12px; color: var(--accent); margin-top: 2px; font-weight: 500; }
+
+/* RECENT WORKOUT ITEM */
+.workout-item {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+.workout-item:last-child { border-bottom: none; }
+.workout-item-name { font-weight: 600; font-size: 14px; margin-bottom: 3px; }
+.workout-item-meta { font-size: 12px; color: var(--text-muted); }
+
+/* CHARTS */
+.chart-container {
+  position: relative;
+  height: 260px;
+  margin-top: 8px;
+}
+
+/* DIVIDER */
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: 14px 0;
+}
+
+/* HELPERS */
+.flex-between { display: flex; justify-content: space-between; align-items: center; }
+.help-text { font-size: 12px; color: var(--text-muted); margin-top: 6px; line-height: 1.4; }
+.empty {
+  text-align: center;
+  color: var(--text-soft);
+  padding: 28px 16px;
+  font-size: 14px;
+}
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+.date-pill {
+  background: var(--surface-alt);
+  border: 1.5px solid var(--border);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  width: auto !important;
+  min-width: 0 !important;
+}
+
+@media (max-width: 480px) {
+  .row { flex-direction: column; gap: 8px; }
+  .row > * { min-width: 100%; flex: none; }
+  .ring-wrapper { width: 180px; height: 180px; }
+  .ring-value { font-size: 34px; }
 }
 </style>
+
 </head>
 <body>
 <div class="container">
-  <h1>Fitness ve Beslenme Takibi</h1>
-  <p class="subtitle">Kişisel kullanım, veriler tarayıcında saklanır</p>
-
-  <div class="tabs">
-    <button class="tab active" data-tab="dashboard">Panel</button>
-    <button class="tab" data-tab="workout">Antrenman</button>
-    <button class="tab" data-tab="templates">Programlar</button>
-    <button class="tab" data-tab="nutrition">Beslenme</button>
-    <button class="tab" data-tab="foods">Besin DB</button>
-    <button class="tab" data-tab="body">Vücut</button>
-    <button class="tab" data-tab="progress">Gelişim</button>
-    <button class="tab" data-tab="settings">Ayarlar</button>
-  </div>
 
   <!-- DASHBOARD -->
   <div class="panel active" id="dashboard">
-    <div class="card">
-      <div class="card-title">Bugün <span id="today-date" style="color:#8a8a8a;font-weight:400;font-size:13px;"></span></div>
-      <div class="grid-3" id="today-macros"></div>
+    <div class="app-header">
+      <div>
+        <div class="app-title">Bugün</div>
+        <div class="app-subtitle" id="today-date"></div>
+      </div>
     </div>
-    <div class="grid-2">
-      <div class="card">
-        <div class="card-title">Son antrenmanlar</div>
-        <div id="recent-workouts"></div>
+
+    <!-- BIG CALORIE RING -->
+    <div class="ring-card">
+      <div class="ring-wrapper">
+        <svg width="200" height="200" viewBox="0 0 200 200">
+          <circle class="ring-bg" cx="100" cy="100" r="85"></circle>
+          <circle class="ring-fill" id="ring-fill" cx="100" cy="100" r="85" stroke-dasharray="0 534"></circle>
+        </svg>
+        <div class="ring-center">
+          <div class="ring-value" id="ring-value">0</div>
+          <div class="ring-label">kalori</div>
+          <div class="ring-goal" id="ring-goal">/ 2500 hedef</div>
+        </div>
       </div>
-      <div class="card">
-        <div class="card-title">Vücut ağırlığı</div>
-        <div id="weight-summary"></div>
-      </div>
+      <div class="macro-pills" id="dashboard-macros"></div>
+    </div>
+
+    <!-- RECENT WORKOUTS -->
+    <div class="card">
+      <div class="card-title">Son antrenmanlar</div>
+      <div id="recent-workouts"></div>
+    </div>
+
+    <!-- WEIGHT SUMMARY -->
+    <div class="card">
+      <div class="card-title">Vücut ağırlığı</div>
+      <div id="weight-summary"></div>
     </div>
   </div>
 
   <!-- WORKOUT -->
   <div class="panel" id="workout">
+    <div class="app-header">
+      <div class="app-title">Antrenman</div>
+    </div>
+
     <div class="card">
-      <div class="flex-between">
+      <div class="section-header">
         <div class="card-title" style="margin-bottom:0;">Yeni antrenman</div>
-        <div>
-          <select id="load-template" style="width:auto; display:inline-block;">
+      </div>
+      <div class="field">
+        <label class="field-label">Programdan yükle</label>
+        <div style="display:flex; gap:8px;">
+          <select id="load-template" style="flex:1;">
             <option value="">Program seç...</option>
           </select>
           <button class="secondary" onclick="loadTemplate()">Yükle</button>
         </div>
       </div>
       <div class="row">
-        <div>
-          <label>Tarih</label>
+        <div class="field" style="flex:1;">
+          <label class="field-label">Tarih</label>
           <input type="date" id="workout-date">
         </div>
-        <div style="flex:2;">
-          <label>Antrenman adı</label>
-          <input type="text" id="workout-name" placeholder="ör: Push Day, Bacak">
+        <div class="field" style="flex:2;">
+          <label class="field-label">Antrenman adı</label>
+          <input type="text" id="workout-name" placeholder="ör: Push Day">
         </div>
       </div>
       <div id="exercises-list"></div>
-      <div class="row" style="margin-top:12px;">
-        <button onclick="addExercise()">+ Egzersiz ekle</button>
-        <button class="secondary" onclick="saveWorkout()">Antrenmanı kaydet</button>
-      </div>
+      <button class="secondary" onclick="addExercise()" style="width:100%; margin-top:8px;">+ Egzersiz ekle</button>
+      <button class="fab" onclick="saveWorkout()">Antrenmanı kaydet</button>
     </div>
   </div>
 
   <!-- TEMPLATES -->
   <div class="panel" id="templates">
+    <div class="app-header">
+      <div class="app-title">Programlar</div>
+    </div>
+
     <div class="card">
-      <div class="card-title">Yeni program oluştur</div>
-      <div class="row">
-        <input type="text" id="template-name" placeholder="Program adı (ör: Push Day A)">
-        <button onclick="addTemplateExerciseUI()">+ Egzersiz</button>
+      <div class="card-title">Yeni program</div>
+      <div class="field">
+        <label class="field-label">Program adı</label>
+        <input type="text" id="template-name" placeholder="ör: Push Day A">
       </div>
       <div id="template-exercises"></div>
-      <button onclick="saveTemplate()" style="margin-top:8px;">Programı kaydet</button>
+      <button class="secondary" onclick="addTemplateExerciseUI()" style="width:100%; margin-top:8px;">+ Egzersiz ekle</button>
+      <button class="fab" onclick="saveTemplate()">Programı kaydet</button>
     </div>
+
     <div class="card">
       <div class="card-title">Kayıtlı programlar</div>
       <div id="templates-list"></div>
@@ -361,66 +690,65 @@ canvas { max-width: 100%; }
 
   <!-- NUTRITION -->
   <div class="panel" id="nutrition">
-    <div class="card">
-      <div class="flex-between">
-        <div class="card-title" style="margin-bottom:0;">
-          <input type="date" id="nutrition-date" style="width:auto; display:inline-block;" onchange="renderNutrition()">
-        </div>
-        <button class="secondary small" onclick="toggleGoalsEdit()">Hedefleri düzenle</button>
-      </div>
-      <div id="goals-edit-panel" style="display:none; margin-top:12px; padding:12px; background:#0f1115; border-radius:8px;">
-        <div class="row">
-          <div>
-            <label>Kalori</label>
-            <input type="number" id="quick-goal-cal">
-          </div>
-          <div>
-            <label>Protein (g)</label>
-            <input type="number" id="quick-goal-pro">
-          </div>
-          <div>
-            <label>Karb (g)</label>
-            <input type="number" id="quick-goal-carb">
-          </div>
-          <div>
-            <label>Yağ (g)</label>
-            <input type="number" id="quick-goal-fat">
-          </div>
-          <div style="display:flex; align-items:flex-end;">
-            <button onclick="saveQuickGoals()">Kaydet</button>
-          </div>
-        </div>
-      </div>
-      <div class="grid-3" id="nutrition-macros" style="margin-top:12px;"></div>
+    <div class="app-header">
+      <div class="app-title">Beslenme</div>
+      <input type="date" id="nutrition-date" class="date-pill" onchange="renderNutrition()">
     </div>
 
-    <div class="card">
-      <div class="card-title">Besin ekle</div>
-      <div class="row">
-        <div style="flex:2;">
-          <label>Hızlı arama (DB'den)</label>
-          <input type="text" id="food-search" placeholder="Besin adı yaz..." oninput="searchFood()">
-          <div id="food-search-results" style="margin-top:4px;"></div>
+    <!-- DAILY CALORIE RING -->
+    <div class="ring-card">
+      <div class="ring-wrapper">
+        <svg width="200" height="200" viewBox="0 0 200 200">
+          <circle class="ring-bg" cx="100" cy="100" r="85"></circle>
+          <circle class="ring-fill" id="nutrition-ring-fill" cx="100" cy="100" r="85" stroke-dasharray="0 534"></circle>
+        </svg>
+        <div class="ring-center">
+          <div class="ring-value" id="nutrition-ring-value">0</div>
+          <div class="ring-label">kalori</div>
+          <div class="ring-goal" id="nutrition-ring-goal">/ 2500 hedef</div>
         </div>
       </div>
-      <div class="section-divider"></div>
-      <div class="row">
-        <div style="flex:2;">
-          <label>Besin adı</label>
-          <input type="text" id="meal-name" placeholder="ör: Tavuk göğsü" oninput="clearFoodLink()">
+      <div class="macro-pills" id="nutrition-macros"></div>
+      <button class="ghost" onclick="toggleGoalsEdit()" style="margin-top:12px;">Hedefleri düzenle</button>
+      <div id="goals-edit-panel" style="display:none; margin-top:12px; padding:14px; background:var(--surface-alt); border-radius:var(--radius-sm); text-align:left;">
+        <div class="row">
+          <div class="field"><label class="field-label">Kalori</label><input type="number" id="quick-goal-cal"></div>
+          <div class="field"><label class="field-label">Protein</label><input type="number" id="quick-goal-pro"></div>
         </div>
-        <div>
-          <label>Miktar</label>
+        <div class="row">
+          <div class="field"><label class="field-label">Karb</label><input type="number" id="quick-goal-carb"></div>
+          <div class="field"><label class="field-label">Yağ</label><input type="number" id="quick-goal-fat"></div>
+        </div>
+        <button onclick="saveQuickGoals()" style="width:100%;">Kaydet</button>
+      </div>
+    </div>
+
+    <!-- ADD MEAL -->
+    <div class="card">
+      <div class="card-title">Besin ekle</div>
+      <div class="field">
+        <label class="field-label">Hızlı arama</label>
+        <input type="text" id="food-search" placeholder="Besin adı yaz..." oninput="searchFood()">
+        <div id="food-search-results" class="search-results"></div>
+      </div>
+      <div class="divider"></div>
+      <div class="field">
+        <label class="field-label">Besin adı</label>
+        <input type="text" id="meal-name" placeholder="ör: Tavuk göğsü" oninput="clearFoodLink()">
+      </div>
+      <div class="row">
+        <div class="field" style="flex:1;">
+          <label class="field-label">Miktar</label>
           <input type="number" id="meal-amount" step="0.1" placeholder="100" oninput="recalcMealMacros()">
         </div>
-        <div>
-          <label>Birim</label>
+        <div class="field" style="flex:1;">
+          <label class="field-label">Birim</label>
           <select id="meal-unit">
             <option value="g">gram</option>
             <option value="adet">adet</option>
             <option value="kase">kase</option>
             <option value="dilim">dilim</option>
-            <option value="kaşık">yemek kaşığı</option>
+            <option value="kaşık">y. kaşığı</option>
             <option value="bardak">bardak</option>
             <option value="fincan">fincan</option>
             <option value="porsiyon">porsiyon</option>
@@ -428,68 +756,76 @@ canvas { max-width: 100%; }
         </div>
       </div>
       <div class="row">
-        <div>
-          <label>Kalori</label>
+        <div class="field" style="flex:1;">
+          <label class="field-label">Kalori</label>
           <input type="number" id="meal-cal" step="0.1">
         </div>
-        <div>
-          <label>Protein (g)</label>
+        <div class="field" style="flex:1;">
+          <label class="field-label">Protein</label>
           <input type="number" id="meal-pro" step="0.1">
-        </div>
-        <div>
-          <label>Karb (g)</label>
-          <input type="number" id="meal-carb" step="0.1">
-        </div>
-        <div>
-          <label>Yağ (g)</label>
-          <input type="number" id="meal-fat" step="0.1">
         </div>
       </div>
       <div class="row">
-        <div>
-          <label>Öğün</label>
-          <select id="meal-type">
-            <option>Kahvaltı</option>
-            <option>Öğle</option>
-            <option>Akşam</option>
-            <option>Atıştırmalık</option>
-          </select>
+        <div class="field" style="flex:1;">
+          <label class="field-label">Karb</label>
+          <input type="number" id="meal-carb" step="0.1">
         </div>
-        <div style="display:flex; align-items:flex-end; gap:6px;">
-          <button onclick="addMeal()">Ekle</button>
-          <button class="secondary" onclick="saveToFoodDB()">Veritabanına da kaydet</button>
+        <div class="field" style="flex:1;">
+          <label class="field-label">Yağ</label>
+          <input type="number" id="meal-fat" step="0.1">
         </div>
       </div>
-      <p class="help-text">DB'den besin seçince miktar otomatik dolar, sen istediğin gibi değiştirirsin (ör: 2 adet, 1.5 kase). Makrolar anlık hesaplanır. Manuel girişte de değerleri direkt yazabilirsin.</p>
+      <div class="field">
+        <label class="field-label">Öğün</label>
+        <select id="meal-type">
+          <option>Kahvaltı</option>
+          <option>Öğle</option>
+          <option>Akşam</option>
+          <option>Atıştırmalık</option>
+        </select>
+      </div>
+      <div class="row" style="margin-top:4px;">
+        <button onclick="addMeal()" style="flex:2;">Ekle</button>
+        <button class="secondary" onclick="saveToFoodDB()" style="flex:1;">DB'ye kaydet</button>
+      </div>
     </div>
 
-    <div class="card">
-      <div class="card-title">Bugünün öğünleri</div>
-      <div id="meals-list"></div>
-    </div>
+    <!-- MEALS LIST (Lifesum-style by meal type) -->
+    <div id="meals-list"></div>
   </div>
 
   <!-- FOOD DB -->
   <div class="panel" id="foods">
-    <div class="card">
-      <div class="card-title">Besin veritabanı (100g başına)</div>
-      <div class="row">
-        <input type="text" id="db-name" placeholder="Besin adı">
-        <input type="number" id="db-cal" placeholder="Kalori" step="0.1">
-        <input type="number" id="db-pro" placeholder="Protein" step="0.1">
-        <input type="number" id="db-carb" placeholder="Karb" step="0.1">
-        <input type="number" id="db-fat" placeholder="Yağ" step="0.1">
-        <button onclick="addToFoodDB()">Ekle</button>
-      </div>
+    <div class="app-header">
+      <div class="app-title">Besin Veritabanı</div>
     </div>
+
     <div class="card">
-      <div class="card-title">Kayıtlı besinler</div>
-      <div class="row" style="margin-bottom:12px;">
-        <input type="text" id="food-db-filter" placeholder="Besin ara..." oninput="renderFoodDB()" style="flex:2;">
-        <select id="food-db-show" onchange="renderFoodDB()" style="max-width:160px;">
+      <div class="card-title">Besin ekle</div>
+      <div class="card-subtitle">Sık yediklerini buraya kaydet, hızlı eriş</div>
+      <div class="field">
+        <label class="field-label">Besin adı</label>
+        <input type="text" id="db-name" placeholder="ör: Sevdiğim protein bar">
+      </div>
+      <div class="row">
+        <div class="field" style="flex:1;"><label class="field-label">Kalori</label><input type="number" id="db-cal" step="0.1"></div>
+        <div class="field" style="flex:1;"><label class="field-label">Protein</label><input type="number" id="db-pro" step="0.1"></div>
+      </div>
+      <div class="row">
+        <div class="field" style="flex:1;"><label class="field-label">Karb</label><input type="number" id="db-carb" step="0.1"></div>
+        <div class="field" style="flex:1;"><label class="field-label">Yağ</label><input type="number" id="db-fat" step="0.1"></div>
+      </div>
+      <button onclick="addToFoodDB()" style="width:100%;">Ekle (100g başına)</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Tüm besinler</div>
+      <div class="row" style="margin-bottom:14px;">
+        <input type="text" id="food-db-filter" placeholder="Ara..." oninput="renderFoodDB()" style="flex:2;">
+        <select id="food-db-show" onchange="renderFoodDB()" style="flex:1;">
           <option value="all">Tümü</option>
-          <option value="custom">Sadece eklediklerim</option>
-          <option value="builtin">Sadece hazır olanlar</option>
+          <option value="custom">Eklediklerim</option>
+          <option value="builtin">Hazır olanlar</option>
         </select>
       </div>
       <div id="food-db-list"></div>
@@ -498,118 +834,143 @@ canvas { max-width: 100%; }
 
   <!-- BODY -->
   <div class="panel" id="body">
-    <div class="card">
-      <div class="card-title">Vücut ölçümü ekle</div>
-      <div class="row">
-        <div>
-          <label>Tarih</label>
-          <input type="date" id="body-date">
-        </div>
-        <div>
-          <label>Kilo (kg)</label>
-          <input type="number" id="body-weight" step="0.1">
-        </div>
-        <div>
-          <label>Bel (cm)</label>
-          <input type="number" id="body-waist" step="0.1">
-        </div>
-        <div>
-          <label>Göğüs (cm)</label>
-          <input type="number" id="body-chest" step="0.1">
-        </div>
-      </div>
-      <div class="row">
-        <div>
-          <label>Kol (cm)</label>
-          <input type="number" id="body-arm" step="0.1">
-        </div>
-        <div>
-          <label>Bacak (cm)</label>
-          <input type="number" id="body-leg" step="0.1">
-        </div>
-        <div>
-          <label>Yağ %</label>
-          <input type="number" id="body-fat" step="0.1">
-        </div>
-        <div style="display:flex; align-items:flex-end;">
-          <button onclick="saveBody()">Kaydet</button>
-        </div>
-      </div>
+    <div class="app-header">
+      <div class="app-title">Vücut Ölçümleri</div>
     </div>
+
     <div class="card">
-      <div class="card-title">Geçmiş ölçümler</div>
+      <div class="card-title">Yeni ölçüm</div>
+      <div class="row">
+        <div class="field" style="flex:1;"><label class="field-label">Tarih</label><input type="date" id="body-date"></div>
+        <div class="field" style="flex:1;"><label class="field-label">Kilo (kg)</label><input type="number" id="body-weight" step="0.1"></div>
+      </div>
+      <div class="row">
+        <div class="field" style="flex:1;"><label class="field-label">Bel (cm)</label><input type="number" id="body-waist" step="0.1"></div>
+        <div class="field" style="flex:1;"><label class="field-label">Göğüs (cm)</label><input type="number" id="body-chest" step="0.1"></div>
+      </div>
+      <div class="row">
+        <div class="field" style="flex:1;"><label class="field-label">Kol (cm)</label><input type="number" id="body-arm" step="0.1"></div>
+        <div class="field" style="flex:1;"><label class="field-label">Bacak (cm)</label><input type="number" id="body-leg" step="0.1"></div>
+      </div>
+      <div class="field">
+        <label class="field-label">Yağ %</label>
+        <input type="number" id="body-fat" step="0.1">
+      </div>
+      <button onclick="saveBody()" style="width:100%;">Kaydet</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Geçmiş</div>
       <div id="body-list"></div>
     </div>
   </div>
 
   <!-- PROGRESS -->
   <div class="panel" id="progress">
+    <div class="app-header">
+      <div class="app-title">Gelişim</div>
+    </div>
+
     <div class="card">
-      <div class="card-title">Egzersiz gelişim grafiği</div>
+      <div class="card-title">Egzersiz grafiği</div>
       <div class="row">
-        <select id="progress-exercise">
+        <select id="progress-exercise" style="flex:1;">
           <option value="">Egzersiz seç...</option>
         </select>
-        <select id="progress-metric">
+        <select id="progress-metric" style="flex:1;">
           <option value="1rm">Tahmini 1RM</option>
           <option value="topVolume">En ağır set hacmi</option>
-          <option value="totalVolume">Toplam hacim (kg)</option>
+          <option value="totalVolume">Toplam hacim</option>
           <option value="maxWeight">Max ağırlık</option>
         </select>
-        <button onclick="renderProgressChart()">Göster</button>
       </div>
+      <button class="secondary" onclick="renderProgressChart()" style="width:100%; margin-top:8px;">Göster</button>
       <div class="chart-container">
         <canvas id="progress-chart"></canvas>
       </div>
     </div>
+
     <div class="card">
       <div class="card-title">Kilo gelişimi</div>
       <div class="chart-container">
         <canvas id="weight-chart"></canvas>
       </div>
     </div>
+
     <div class="card">
-      <div class="card-title">Kişisel rekorlar (PR)</div>
+      <div class="card-title">Kişisel rekorlar</div>
       <div id="pr-list"></div>
     </div>
   </div>
 
   <!-- SETTINGS -->
   <div class="panel" id="settings">
+    <div class="app-header">
+      <div class="app-title">Ayarlar</div>
+    </div>
+
     <div class="card">
       <div class="card-title">Günlük makro hedefleri</div>
       <div class="row">
-        <div>
-          <label>Kalori</label>
-          <input type="number" id="goal-cal" step="1">
-        </div>
-        <div>
-          <label>Protein (g)</label>
-          <input type="number" id="goal-pro" step="1">
-        </div>
-        <div>
-          <label>Karb (g)</label>
-          <input type="number" id="goal-carb" step="1">
-        </div>
-        <div>
-          <label>Yağ (g)</label>
-          <input type="number" id="goal-fat" step="1">
-        </div>
+        <div class="field" style="flex:1;"><label class="field-label">Kalori</label><input type="number" id="goal-cal"></div>
+        <div class="field" style="flex:1;"><label class="field-label">Protein</label><input type="number" id="goal-pro"></div>
       </div>
-      <button onclick="saveGoals()">Hedefleri kaydet</button>
+      <div class="row">
+        <div class="field" style="flex:1;"><label class="field-label">Karb</label><input type="number" id="goal-carb"></div>
+        <div class="field" style="flex:1;"><label class="field-label">Yağ</label><input type="number" id="goal-fat"></div>
+      </div>
+      <button onclick="saveGoals()" style="width:100%;">Hedefleri kaydet</button>
     </div>
+
     <div class="card">
       <div class="card-title">Veri yönetimi</div>
-      <div class="row">
-        <button class="secondary" onclick="exportData()">Tüm veriyi indir (JSON)</button>
-        <button class="secondary" onclick="document.getElementById('import-file').click()">Veri içe aktar</button>
-        <input type="file" id="import-file" accept=".json" style="display:none;" onchange="importData(event)">
-        <button class="danger" onclick="clearAll()">Tüm veriyi sil</button>
-      </div>
-      <p class="help-text" style="margin-top:8px;">Veriler tarayıcının localStorage'ında saklanır. Tarayıcı temizlenirse veri kaybolur, periyodik olarak dışa aktar.</p>
+      <div class="card-subtitle">Periyodik olarak yedek almayı unutma</div>
+      <button class="secondary" onclick="exportData()" style="width:100%; margin-bottom:8px;">Tüm veriyi indir (JSON)</button>
+      <button class="secondary" onclick="document.getElementById('import-file').click()" style="width:100%; margin-bottom:8px;">Veri içe aktar</button>
+      <input type="file" id="import-file" accept=".json" style="display:none;" onchange="importData(event)">
+      <button class="danger" onclick="clearAll()" style="width:100%;">Tüm veriyi sil</button>
     </div>
   </div>
+
 </div>
+
+<!-- BOTTOM TAB BAR -->
+<nav class="tab-bar">
+  <button class="tab active" data-tab="dashboard">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+    <span>Panel</span>
+  </button>
+  <button class="tab" data-tab="nutrition">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+    <span>Beslenme</span>
+  </button>
+  <button class="tab" data-tab="workout">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+    <span>Antrenman</span>
+  </button>
+  <button class="tab" data-tab="progress">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+    <span>Gelişim</span>
+  </button>
+  <button class="tab" data-tab="more">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+    <span>Daha</span>
+  </button>
+</nav>
+
+<!-- MORE MENU PANEL (modal-like) -->
+<div class="panel" id="more">
+  <div class="app-header">
+    <div class="app-title">Daha</div>
+  </div>
+  <div class="card">
+    <button class="secondary" onclick="switchTab('templates')" style="width:100%; margin-bottom:8px; text-align:left;">Programlar</button>
+    <button class="secondary" onclick="switchTab('foods')" style="width:100%; margin-bottom:8px; text-align:left;">Besin Veritabanı</button>
+    <button class="secondary" onclick="switchTab('body')" style="width:100%; margin-bottom:8px; text-align:left;">Vücut Ölçümleri</button>
+    <button class="secondary" onclick="switchTab('settings')" style="width:100%; text-align:left;">Ayarlar</button>
+  </div>
+</div>
+
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
@@ -843,15 +1204,26 @@ function fmt(n, dec=1) {
 }
 
 // ============== TABS ==============
-document.querySelectorAll('.tab').forEach(t => {
-  t.addEventListener('click', () => {
-    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
-    document.querySelectorAll('.panel').forEach(x => x.classList.remove('active'));
-    t.classList.add('active');
-    const panel = document.getElementById(t.dataset.tab);
-    panel.classList.add('active');
-    refreshTab(t.dataset.tab);
-  });
+function switchTab(tabId) {
+  document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(x => x.classList.remove('active'));
+  // Bottom tab bar butonunu aktifle (eğer varsa)
+  const tabBtn = document.querySelector(`.tab[data-tab="${tabId}"]`);
+  if (tabBtn) tabBtn.classList.add('active');
+  // Eğer üst-seviye tab değilse "more" tab'i aktif gözüksün
+  const topLevelTabs = ['dashboard', 'nutrition', 'workout', 'progress', 'more'];
+  if (!topLevelTabs.includes(tabId)) {
+    const moreBtn = document.querySelector('.tab[data-tab="more"]');
+    if (moreBtn) moreBtn.classList.add('active');
+  }
+  const panel = document.getElementById(tabId);
+  if (panel) panel.classList.add('active');
+  refreshTab(tabId);
+  window.scrollTo(0, 0);
+}
+
+document.querySelectorAll('.tab-bar .tab').forEach(t => {
+  t.addEventListener('click', () => switchTab(t.dataset.tab));
 });
 
 function refreshTab(tab) {
@@ -895,24 +1267,24 @@ function renderExercises() {
   }
   c.innerHTML = currentExercises.map((ex, i) => {
     const lastWorkout = findLastExercise(ex.name);
-    const lastInfo = lastWorkout ? `<div class="help-text">Son: ${lastWorkout.sets.map(s=>`${s.weight}×${s.reps}`).join(', ')} (${lastWorkout.date})</div>` : '';
+    const lastInfo = lastWorkout ? `<div class="last-info">Son: ${lastWorkout.sets.map(s=>`${s.weight}×${s.reps}`).join(', ')} (${lastWorkout.date})</div>` : '';
     return `
     <div class="exercise-block">
-      <div class="row" style="margin-bottom:8px;">
-        <input type="text" placeholder="Egzersiz adı (ör: Bench Press)" value="${ex.name}" onchange="currentExercises[${i}].name=this.value; renderExercises()">
-        <button class="delete-x" onclick="removeExercise(${i})">×</button>
+      <div class="exercise-header">
+        <input type="text" placeholder="Egzersiz adı" value="${ex.name}" onchange="currentExercises[${i}].name=this.value; renderExercises()">
+        <button class="icon-btn" onclick="removeExercise(${i})">×</button>
       </div>
       ${lastInfo}
       ${ex.sets.map((s, j) => `
         <div class="set-row">
-          <span class="set-num">${j+1}.</span>
+          <span class="set-num">${j+1}</span>
           <input type="number" placeholder="kg" value="${s.weight}" onchange="currentExercises[${i}].sets[${j}].weight=parseFloat(this.value)||0" step="0.5">
-          <span style="color:#8a8a8a;">×</span>
+          <span style="color:var(--text-soft);">×</span>
           <input type="number" placeholder="tekrar" value="${s.reps}" onchange="currentExercises[${i}].sets[${j}].reps=parseInt(this.value)||0">
-          <button class="delete-x small" onclick="removeSet(${i}, ${j})">×</button>
+          <button class="icon-btn" onclick="removeSet(${i}, ${j})">×</button>
         </div>
       `).join('')}
-      <button class="secondary small" onclick="addSet(${i})">+ Set</button>
+      <button class="ghost small" onclick="addSet(${i})">+ Set ekle</button>
     </div>`;
   }).join('');
 }
@@ -968,11 +1340,11 @@ function removeTemplateExercise(i) {
 function renderTemplateForm() {
   const c = document.getElementById('template-exercises');
   c.innerHTML = templateExercises.map((ex, i) => `
-    <div class="row" style="margin-bottom:6px;">
-      <input type="text" placeholder="Egzersiz" value="${ex.name}" onchange="templateExercises[${i}].name=this.value">
-      <input type="number" placeholder="Set" value="${ex.sets}" onchange="templateExercises[${i}].sets=parseInt(this.value)||3" style="max-width:80px;">
-      <input type="text" placeholder="Tekrar" value="${ex.reps}" onchange="templateExercises[${i}].reps=this.value" style="max-width:100px;">
-      <button class="delete-x" onclick="removeTemplateExercise(${i})">×</button>
+    <div style="display:flex; gap:6px; margin-bottom:8px; align-items:center;">
+      <input type="text" placeholder="Egzersiz" value="${ex.name}" onchange="templateExercises[${i}].name=this.value" style="flex:2;">
+      <input type="number" placeholder="Set" value="${ex.sets}" onchange="templateExercises[${i}].sets=parseInt(this.value)||3" style="flex:0 0 60px;">
+      <input type="text" placeholder="Tekrar" value="${ex.reps}" onchange="templateExercises[${i}].reps=this.value" style="flex:0 0 80px;">
+      <button class="icon-btn" onclick="removeTemplateExercise(${i})">×</button>
     </div>
   `).join('');
 }
@@ -1007,13 +1379,11 @@ function renderTemplates() {
   }
   c.innerHTML = state.templates.map(t => `
     <div class="template-card">
-      <div class="flex-between">
-        <div>
-          <div class="template-name">${t.name}</div>
-          <div class="template-meta">${t.exercises.map(e => `<span class="tag">${e.name} ${e.sets}×${e.reps}</span>`).join('')}</div>
-        </div>
-        <button class="danger small" onclick="deleteTemplate(${t.id})">Sil</button>
+      <div class="template-card-info">
+        <div class="template-name">${t.name}</div>
+        <div class="template-meta">${t.exercises.map(e => `<span class="tag">${e.name} ${e.sets}×${e.reps}</span>`).join('')}</div>
       </div>
+      <button class="icon-btn" onclick="deleteTemplate(${t.id})" title="Sil">×</button>
     </div>
   `).join('');
 }
@@ -1059,57 +1429,71 @@ function renderNutrition() {
     fat: a.fat + (m.fat||0)
   }), { cal:0, pro:0, carb:0, fat:0 });
 
+  // Ring chart
+  updateRing(
+    document.getElementById('nutrition-ring-fill'),
+    document.getElementById('nutrition-ring-value'),
+    document.getElementById('nutrition-ring-goal'),
+    totals.cal, state.goals.cal
+  );
+
+  // Macro pills
   const macros = [
-    { label: 'Kalori', val: totals.cal, goal: state.goals.cal, unit: 'kcal' },
-    { label: 'Protein', val: totals.pro, goal: state.goals.pro, unit: 'g' },
-    { label: 'Karb', val: totals.carb, goal: state.goals.carb, unit: 'g' },
-    { label: 'Yağ', val: totals.fat, goal: state.goals.fat, unit: 'g' }
+    { name: 'Protein', val: totals.pro, goal: state.goals.pro, cls: 'protein' },
+    { name: 'Karb', val: totals.carb, goal: state.goals.carb, cls: 'carb' },
+    { name: 'Yağ', val: totals.fat, goal: state.goals.fat, cls: 'fat' }
   ];
   document.getElementById('nutrition-macros').innerHTML = macros.map(m => {
     const pct = m.goal > 0 ? Math.min(100, (m.val/m.goal)*100) : 0;
-    const over = m.val > m.goal;
     return `
-      <div class="stat">
-        <div class="stat-label">${m.label}</div>
-        <div class="stat-value">${fmt(m.val,0)} <span style="font-size:12px;color:#8a8a8a;">/ ${m.goal} ${m.unit}</span></div>
-        <div class="progress-bar"><div class="progress-fill ${over?'over':''}" style="width:${pct}%"></div></div>
+      <div class="macro-pill">
+        <div class="macro-pill-bar"><div class="macro-pill-fill ${m.cls}" style="width:${pct}%"></div></div>
+        <div class="macro-pill-name">${m.name}</div>
+        <div class="macro-pill-val">${fmt(m.val,0)}<span> / ${m.goal}g</span></div>
       </div>`;
   }).join('');
 
-  const grouped = {};
-  meals.forEach(m => {
-    if (!grouped[m.type]) grouped[m.type] = [];
-    grouped[m.type].push(m);
-  });
+  // Meal sections (always show all 4, even if empty)
+  const mealTypes = [
+    { name: 'Kahvaltı', icon: '☀', cls: 'kahvalti' },
+    { name: 'Öğle', icon: '🍽', cls: 'ogle' },
+    { name: 'Akşam', icon: '🌙', cls: 'aksam' },
+    { name: 'Atıştırmalık', icon: '🍎', cls: 'atistirmalik' }
+  ];
+
   const c = document.getElementById('meals-list');
-  if (meals.length === 0) {
-    c.innerHTML = '<div class="empty">Bu güne öğün eklenmedi</div>';
-    return;
-  }
-  c.innerHTML = Object.entries(grouped).map(([type, items]) => `
-    <div style="margin-bottom:12px;">
-      <div style="font-weight:500; font-size:13px; margin-bottom:6px; color:#5DCAA5;">${type}</div>
-      ${items.map(m => {
-        // Eski meal'lerde grams alanı olabilir, geriye uyumluluk
-        let displayAmount = '';
-        if (m.amount && m.unit) {
-          displayAmount = `(${m.amount} ${m.unit === 'g' ? 'g' : m.unit})`;
-        } else if (m.grams) {
-          displayAmount = `(${m.grams}g)`;
+  c.innerHTML = mealTypes.map(mt => {
+    const items = meals.filter(m => m.type === mt.name);
+    const sectionCal = items.reduce((a,b) => a + (b.cal||0), 0);
+    return `
+      <div class="meal-section">
+        <div class="meal-header">
+          <div class="meal-icon ${mt.cls}">${mt.icon}</div>
+          <div class="meal-title">${mt.name}</div>
+          <div class="meal-cal">${fmt(sectionCal, 0)} kcal</div>
+        </div>
+        ${items.length === 0
+          ? '<div class="meal-empty">Henüz besin eklenmedi</div>'
+          : items.map(m => {
+              let displayAmount = '';
+              if (m.amount && m.unit) {
+                displayAmount = `${m.amount} ${m.unit === 'g' ? 'g' : m.unit}`;
+              } else if (m.grams) {
+                displayAmount = `${m.grams} g`;
+              }
+              return `
+                <div class="meal-item">
+                  <div class="meal-item-info">
+                    <div class="meal-item-name">${m.name}</div>
+                    <div class="meal-item-detail">${displayAmount ? displayAmount + ' · ' : ''}P ${fmt(m.pro)} · K ${fmt(m.carb)} · Y ${fmt(m.fat)}</div>
+                  </div>
+                  <div class="meal-item-cal">${fmt(m.cal, 0)}</div>
+                  <button class="icon-btn" onclick="deleteMeal(${m.id})" title="Sil">×</button>
+                </div>`;
+            }).join('')
         }
-        return `
-        <div class="food-item">
-          <div>
-            <div>${m.name} ${displayAmount ? `<span style="color:#8a8a8a;">${displayAmount}</span>` : ''}</div>
-            <div class="macro-row">
-              <span>${fmt(m.cal,0)} kcal · P:${fmt(m.pro)} K:${fmt(m.carb)} Y:${fmt(m.fat)}</span>
-            </div>
-          </div>
-          <button class="delete-x" onclick="deleteMeal(${m.id})">×</button>
-        </div>`;
-      }).join('')}
-    </div>
-  `).join('');
+      </div>`;
+  }).join('');
 }
 
 function addMeal() {
@@ -1148,7 +1532,6 @@ function searchFood() {
   const q = document.getElementById('food-search').value.toLowerCase().trim();
   const c = document.getElementById('food-search-results');
   if (!q) { c.innerHTML = ''; return; }
-  // Türkçe karakter normalizasyonu (i ve İ farkını da gider)
   const normalize = s => s.toLowerCase()
     .replace(/ı/g,'i').replace(/ş/g,'s').replace(/ğ/g,'g')
     .replace(/ü/g,'u').replace(/ö/g,'o').replace(/ç/g,'c').replace(/İ/g,'i');
@@ -1156,19 +1539,15 @@ function searchFood() {
   const matches = state.foodDB
     .filter(f => normalize(f.name).includes(qn))
     .slice(0, 8);
-  if (matches.length === 0) { c.innerHTML = '<div class="help-text">Eşleşme yok, manuel ekleyebilirsin</div>'; return; }
+  if (matches.length === 0) { c.innerHTML = '<div class="help-text">Eşleşme yok, aşağıdan manuel ekleyebilirsin</div>'; return; }
   c.innerHTML = matches.map(f => {
     const baseAmount = f.baseAmount || 100;
     const unit = f.unit || 'g';
     const unitLabel = unit === 'g' ? 'g' : ' ' + unit;
     return `
-      <div class="food-item" onclick="selectFood(${f.id})">
-        <div>
-          <div>${f.name}</div>
-          <div class="macro-row">
-            <span>${baseAmount}${unitLabel}: ${fmt(f.cal,0)}k · P${fmt(f.pro)} K${fmt(f.carb)} Y${fmt(f.fat)}</span>
-          </div>
-        </div>
+      <div class="search-result" onclick="selectFood(${f.id})">
+        <div class="search-result-name">${f.name}</div>
+        <div class="search-result-detail">${baseAmount}${unitLabel} · ${fmt(f.cal,0)} kcal · P ${fmt(f.pro)} · K ${fmt(f.carb)} · Y ${fmt(f.fat)}</div>
       </div>`;
   }).join('');
 }
@@ -1299,7 +1678,7 @@ function renderFoodDB() {
             <td>${fmt(f.pro)}</td>
             <td>${fmt(f.carb)}</td>
             <td>${fmt(f.fat)}</td>
-            <td>${!f.builtIn ? `<button class="delete-x" onclick="deleteFood(${f.id})">×</button>` : ''}</td>
+            <td>${!f.builtIn ? `<button class="icon-btn" onclick="deleteFood(${f.id})">×</button>` : ''}</td>
           </tr>
         `).join('')}
       </tbody>
@@ -1353,7 +1732,7 @@ function renderBody() {
             <td>${b.arm ?? '-'}</td>
             <td>${b.leg ?? '-'}</td>
             <td>${b.fat ?? '-'}</td>
-            <td><button class="delete-x" onclick="deleteBody(${b.id})">×</button></td>
+            <td><button class="icon-btn" onclick="deleteBody(${b.id})">×</button></td>
           </tr>
         `).join('')}
       </tbody>
@@ -1415,8 +1794,8 @@ function renderProgressChart() {
   const ctx = document.getElementById('progress-chart');
   progressChart = new Chart(ctx, {
     type: 'line',
-    data: { labels, datasets: [{ label: metricLabels[metric], data: values, borderColor: '#5DCAA5', backgroundColor: 'rgba(93,202,165,0.1)', tension: 0.2, fill: true, pointRadius: 4 }] },
-    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#ccc' } } }, scales: { x: { ticks: { color: '#8a8a8a' }, grid: { color: '#2a2d35' } }, y: { ticks: { color: '#8a8a8a' }, grid: { color: '#2a2d35' } } } }
+    data: { labels, datasets: [{ label: metricLabels[metric], data: values, borderColor: '#2d8f5f', backgroundColor: 'rgba(45,143,95,0.12)', tension: 0.2, fill: true, pointRadius: 4 }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#1a1d1a' } } }, scales: { x: { ticks: { color: '#707570' }, grid: { color: '#ebe6dc' } }, y: { ticks: { color: '#707570' }, grid: { color: '#ebe6dc' } } } }
   });
 }
 
@@ -1428,8 +1807,8 @@ function renderWeightChart() {
   const ctx = document.getElementById('weight-chart');
   weightChart = new Chart(ctx, {
     type: 'line',
-    data: { labels: data.map(d => d.date), datasets: [{ label: 'Kilo (kg)', data: data.map(d => d.weight), borderColor: '#7F77DD', backgroundColor: 'rgba(127,119,221,0.1)', tension: 0.2, fill: true, pointRadius: 4 }] },
-    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#ccc' } } }, scales: { x: { ticks: { color: '#8a8a8a' }, grid: { color: '#2a2d35' } }, y: { ticks: { color: '#8a8a8a' }, grid: { color: '#2a2d35' } } } }
+    data: { labels: data.map(d => d.date), datasets: [{ label: 'Kilo (kg)', data: data.map(d => d.weight), borderColor: '#8b7fd1', backgroundColor: 'rgba(139,127,209,0.12)', tension: 0.2, fill: true, pointRadius: 4 }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#1a1d1a' } } }, scales: { x: { ticks: { color: '#707570' }, grid: { color: '#ebe6dc' } }, y: { ticks: { color: '#707570' }, grid: { color: '#ebe6dc' } } } }
   });
 }
 
@@ -1453,39 +1832,66 @@ function renderPRs() {
 }
 
 // ============== DASHBOARD ==============
+const RING_CIRCUMFERENCE = 2 * Math.PI * 85; // ~534
+
+function updateRing(fillEl, valueEl, goalEl, current, goal, label='kalori') {
+  const pct = goal > 0 ? Math.min(1, current/goal) : 0;
+  const dashLength = pct * RING_CIRCUMFERENCE;
+  fillEl.setAttribute('stroke-dasharray', `${dashLength} ${RING_CIRCUMFERENCE}`);
+  fillEl.classList.toggle('over', current > goal);
+  valueEl.textContent = fmt(current, 0);
+  goalEl.textContent = `/ ${goal} hedef`;
+}
+
 function renderDashboard() {
   const today = todayStr();
-  document.getElementById('today-date').textContent = today;
+  // Tarih formatla: 26 Nisan 2026
+  const months = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+  const days = ['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'];
+  const d = new Date(today + 'T00:00:00');
+  document.getElementById('today-date').textContent =
+    `${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]}`;
+
   const meals = state.meals.filter(m => m.date === today);
   const totals = meals.reduce((a, m) => ({
     cal: a.cal + (m.cal||0), pro: a.pro + (m.pro||0), carb: a.carb + (m.carb||0), fat: a.fat + (m.fat||0)
   }), { cal:0, pro:0, carb:0, fat:0 });
+
+  // Ring chart
+  updateRing(
+    document.getElementById('ring-fill'),
+    document.getElementById('ring-value'),
+    document.getElementById('ring-goal'),
+    totals.cal, state.goals.cal
+  );
+
+  // Macro pills
   const macros = [
-    { label: 'Kalori', val: totals.cal, goal: state.goals.cal, unit: 'kcal' },
-    { label: 'Protein', val: totals.pro, goal: state.goals.pro, unit: 'g' },
-    { label: 'Karb', val: totals.carb, goal: state.goals.carb, unit: 'g' },
-    { label: 'Yağ', val: totals.fat, goal: state.goals.fat, unit: 'g' }
+    { name: 'Protein', val: totals.pro, goal: state.goals.pro, cls: 'protein' },
+    { name: 'Karb', val: totals.carb, goal: state.goals.carb, cls: 'carb' },
+    { name: 'Yağ', val: totals.fat, goal: state.goals.fat, cls: 'fat' }
   ];
-  document.getElementById('today-macros').innerHTML = macros.map(m => {
+  document.getElementById('dashboard-macros').innerHTML = macros.map(m => {
     const pct = m.goal > 0 ? Math.min(100, (m.val/m.goal)*100) : 0;
-    const over = m.val > m.goal;
     return `
-      <div class="stat">
-        <div class="stat-label">${m.label}</div>
-        <div class="stat-value">${fmt(m.val,0)} <span style="font-size:12px;color:#8a8a8a;">/ ${m.goal}</span></div>
-        <div class="progress-bar"><div class="progress-fill ${over?'over':''}" style="width:${pct}%"></div></div>
+      <div class="macro-pill">
+        <div class="macro-pill-bar"><div class="macro-pill-fill ${m.cls}" style="width:${pct}%"></div></div>
+        <div class="macro-pill-name">${m.name}</div>
+        <div class="macro-pill-val">${fmt(m.val,0)}<span> / ${m.goal}g</span></div>
       </div>`;
   }).join('');
 
+  // Recent workouts
   const recent = [...state.workouts].sort((a,b) => b.date.localeCompare(a.date)).slice(0, 5);
   document.getElementById('recent-workouts').innerHTML = recent.length === 0
     ? '<div class="empty">Henüz antrenman yok</div>'
     : recent.map(w => `
-      <div style="padding:8px 0; border-bottom:1px solid #1a1c22;">
-        <div style="font-weight:500; font-size:14px;">${w.name}</div>
-        <div class="help-text">${w.date} · ${w.exercises.length} egzersiz · ${w.exercises.reduce((a,e)=>a+e.sets.length,0)} set</div>
+      <div class="workout-item">
+        <div class="workout-item-name">${w.name}</div>
+        <div class="workout-item-meta">${w.date} · ${w.exercises.length} egzersiz · ${w.exercises.reduce((a,e)=>a+e.sets.length,0)} set</div>
       </div>`).join('');
 
+  // Weight summary
   const bodyData = [...state.body].filter(b => b.weight).sort((a,b) => b.date.localeCompare(a.date));
   if (bodyData.length === 0) {
     document.getElementById('weight-summary').innerHTML = '<div class="empty">Vücut sekmesinden ilk ölçümünü ekle</div>';
@@ -1497,9 +1903,25 @@ function renderDashboard() {
     });
     const change = week ? (latest.weight - week.weight).toFixed(1) : null;
     document.getElementById('weight-summary').innerHTML = `
-      <div class="stat-value">${latest.weight} kg</div>
-      <div class="help-text">Son ölçüm: ${latest.date}</div>
-      ${change !== null ? `<div class="stat-sub" style="color:${change>0?'#F0997B':'#5DCAA5'};">${change>0?'+':''}${change} kg / hafta</div>` : ''}
+      <div class="stat-grid">
+        <div class="stat">
+          <div class="stat-label">Şu anki kilo</div>
+          <div class="stat-value">${latest.weight} kg</div>
+          <div class="stat-sub">${latest.date}</div>
+        </div>
+        ${change !== null ? `
+          <div class="stat">
+            <div class="stat-label">Haftalık değişim</div>
+            <div class="stat-value" style="color:${change>0?'var(--warn)':'var(--accent)'};">${change>0?'+':''}${change} kg</div>
+            <div class="stat-sub">son 7 gün</div>
+          </div>
+        ` : `
+          <div class="stat">
+            <div class="stat-label">Trend</div>
+            <div class="stat-value" style="font-size:14px; color:var(--text-muted);">Bir hafta sonra trend görünür</div>
+          </div>
+        `}
+      </div>
     `;
   }
 }
