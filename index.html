@@ -553,6 +553,96 @@ tr:last-child td { border-bottom: none; }
   margin: 14px 0;
 }
 
+/* PROGRAM CARDS (workout selector) */
+.program-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.program-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 18px;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  border: 2px solid transparent;
+  transition: border-color 0.15s, transform 0.05s;
+  position: relative;
+  overflow: hidden;
+}
+.program-card:hover { border-color: var(--accent-soft); }
+.program-card:active { transform: scale(0.99); }
+.program-card-accent {
+  position: absolute;
+  top: 0; left: 0; bottom: 0;
+  width: 4px;
+  background: var(--accent);
+}
+.program-card-accent.day1 { background: #2d8f5f; }
+.program-card-accent.day2 { background: #d4734a; }
+.program-card-accent.day3 { background: #8b7fd1; }
+.program-card-accent.custom { background: var(--text-muted); }
+.program-card-name {
+  font-size: 17px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  letter-spacing: -0.3px;
+}
+.program-card-meta {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+.program-card-exercises {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.program-card-tag {
+  font-size: 11px;
+  padding: 3px 8px;
+  background: var(--surface-alt);
+  border-radius: 999px;
+  color: var(--text-muted);
+}
+.program-card-tag.more {
+  background: transparent;
+  color: var(--text-soft);
+  font-style: italic;
+}
+
+.section-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin: 18px 4px 10px;
+}
+
+/* WORKOUT IN PROGRESS HEADER */
+.workout-active-header {
+  background: var(--accent);
+  color: white;
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  margin-bottom: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.workout-active-info { flex: 1; }
+.workout-active-name { font-size: 17px; font-weight: 700; }
+.workout-active-date { font-size: 13px; opacity: 0.85; margin-top: 2px; }
+.workout-active-cancel {
+  background: rgba(255,255,255,0.18);
+  color: white;
+  padding: 6px 12px;
+  font-size: 13px;
+  border-radius: 8px;
+}
+
 /* HELPERS */
 .flex-between { display: flex; justify-content: space-between; align-items: center; }
 .help-text { font-size: 12px; color: var(--text-muted); margin-top: 6px; line-height: 1.4; }
@@ -636,32 +726,41 @@ tr:last-child td { border-bottom: none; }
       <div class="app-title">Antrenman</div>
     </div>
 
-    <div class="card">
-      <div class="section-header">
-        <div class="card-title" style="margin-bottom:0;">Yeni antrenman</div>
-      </div>
-      <div class="field">
-        <label class="field-label">Programdan yükle</label>
-        <div style="display:flex; gap:8px;">
-          <select id="load-template" style="flex:1;">
-            <option value="">Program seç...</option>
-          </select>
-          <button class="secondary" onclick="loadTemplate()">Yükle</button>
+    <!-- WORKOUT SELECTOR (programları seç) -->
+    <div id="workout-selector">
+      <div class="section-title">Bugün hangi programı yapıyorsun?</div>
+      <div class="program-grid" id="program-cards"></div>
+
+      <button class="secondary" onclick="startBlankWorkout()" style="width:100%;">
+        + Boş antrenman başlat
+      </button>
+    </div>
+
+    <!-- WORKOUT IN PROGRESS (kart seçildikten sonra) -->
+    <div id="workout-active" style="display:none;">
+      <div class="workout-active-header">
+        <div class="workout-active-info">
+          <div class="workout-active-name" id="active-workout-name">Antrenman</div>
+          <div class="workout-active-date" id="active-workout-date"></div>
         </div>
+        <button class="workout-active-cancel" onclick="cancelWorkout()">İptal</button>
       </div>
-      <div class="row">
-        <div class="field" style="flex:1;">
-          <label class="field-label">Tarih</label>
-          <input type="date" id="workout-date">
+
+      <div class="card">
+        <div class="row">
+          <div class="field" style="flex:1;">
+            <label class="field-label">Tarih</label>
+            <input type="date" id="workout-date">
+          </div>
+          <div class="field" style="flex:2;">
+            <label class="field-label">Antrenman adı</label>
+            <input type="text" id="workout-name" placeholder="ör: Push Day">
+          </div>
         </div>
-        <div class="field" style="flex:2;">
-          <label class="field-label">Antrenman adı</label>
-          <input type="text" id="workout-name" placeholder="ör: Push Day">
-        </div>
+        <div id="exercises-list"></div>
+        <button class="secondary" onclick="addExercise()" style="width:100%; margin-top:8px;">+ Egzersiz ekle</button>
+        <button class="fab" onclick="saveWorkout()">Antrenmanı kaydet</button>
       </div>
-      <div id="exercises-list"></div>
-      <button class="secondary" onclick="addExercise()" style="width:100%; margin-top:8px;">+ Egzersiz ekle</button>
-      <button class="fab" onclick="saveWorkout()">Antrenmanı kaydet</button>
     </div>
   </div>
 
@@ -1166,6 +1265,53 @@ const BUILT_IN_FOODS = [
 
 const BUILT_IN_VERSION = 2; // Built-in DB her güncellenince bu sayıyı artır
 
+// Hazır antrenman programları (Total Package 3-Day Full Body)
+const BUILT_IN_TEMPLATES = [
+  {
+    name: 'Day 1 - Full Body',
+    exercises: [
+      { name: 'Squat', sets: 5, reps: '5' },
+      { name: 'Dumbbell Bench', sets: 4, reps: '10' },
+      { name: 'Dumbbell Row', sets: 4, reps: '10' },
+      { name: 'Seated Dumbbell Press', sets: 4, reps: '10' },
+      { name: 'Lunge', sets: 4, reps: '10' },
+      { name: 'Dumbbell Curl', sets: 3, reps: '10' },
+      { name: 'Standing Barbell Tricep Extension', sets: 3, reps: '10' },
+      { name: 'Calf Raise', sets: 3, reps: '12' },
+      { name: 'Plank', sets: 5, reps: '20 sn' }
+    ]
+  },
+  {
+    name: 'Day 2 - Full Body',
+    exercises: [
+      { name: 'Bench Press', sets: 5, reps: '5' },
+      { name: 'Machine Pec Deck', sets: 3, reps: '12' },
+      { name: 'Leg Extension', sets: 4, reps: '10' },
+      { name: 'Leg Curl', sets: 4, reps: '10' },
+      { name: 'Pullup', sets: 4, reps: '10' },
+      { name: 'Seated Lateral Raise', sets: 4, reps: '10' },
+      { name: 'Dumbbell Hammer Curls', sets: 3, reps: '10' },
+      { name: 'Rope Extension', sets: 3, reps: '10' },
+      { name: 'Plank', sets: 5, reps: '20 sn' }
+    ]
+  },
+  {
+    name: 'Day 3 - Full Body',
+    exercises: [
+      { name: 'Deadlift', sets: 5, reps: '5' },
+      { name: 'Incline Dumbbell Press', sets: 4, reps: '10' },
+      { name: 'Lateral Raise', sets: 4, reps: '10' },
+      { name: 'Pulldown', sets: 4, reps: '10' },
+      { name: 'Leg Press', sets: 4, reps: '10' },
+      { name: 'EZ Bar Curl', sets: 3, reps: '10' },
+      { name: 'Skullcrushers', sets: 3, reps: '10' },
+      { name: 'Dumbbell Shrugs', sets: 3, reps: '12' },
+      { name: 'Plank', sets: 5, reps: '20 sn' }
+    ]
+  }
+];
+const BUILT_IN_TEMPLATES_VERSION = 1;
+
 let state = {
   workouts: [],
   templates: [],
@@ -1173,7 +1319,8 @@ let state = {
   foodDB: [],
   body: [],
   goals: { cal: 2500, pro: 180, carb: 250, fat: 70 },
-  builtInVersion: 0
+  builtInVersion: 0,
+  builtInTemplatesVersion: 0
 };
 
 function load() {
@@ -1188,6 +1335,15 @@ function load() {
       state.foodDB.push({ id: 1000000 + i, ...f, builtIn: true });
     });
     state.builtInVersion = BUILT_IN_VERSION;
+    save();
+  }
+  // Built-in programlar güncellendiyse eski hazırları sil ve yenisini yükle
+  if ((state.builtInTemplatesVersion || 0) < BUILT_IN_TEMPLATES_VERSION) {
+    state.templates = state.templates.filter(t => !t.builtIn);
+    BUILT_IN_TEMPLATES.forEach((t, i) => {
+      state.templates.push({ id: 2000000 + i, ...t, builtIn: true });
+    });
+    state.builtInTemplatesVersion = BUILT_IN_TEMPLATES_VERSION;
     save();
   }
 }
@@ -1228,13 +1384,111 @@ document.querySelectorAll('.tab-bar .tab').forEach(t => {
 
 function refreshTab(tab) {
   if (tab === 'dashboard') renderDashboard();
-  if (tab === 'workout') renderTemplateOptions();
+  if (tab === 'workout') renderWorkoutHome();
   if (tab === 'templates') renderTemplates();
   if (tab === 'nutrition') renderNutrition();
   if (tab === 'foods') renderFoodDB();
   if (tab === 'body') renderBody();
   if (tab === 'progress') { renderExerciseOptions(); renderWeightChart(); renderPRs(); }
   if (tab === 'settings') loadGoals();
+}
+
+// Antrenman ana ekranı (program kartları)
+function renderWorkoutHome() {
+  // Aktif antrenman varsa onu göster
+  if (currentExercises.length > 0) {
+    document.getElementById('workout-selector').style.display = 'none';
+    document.getElementById('workout-active').style.display = 'block';
+    return;
+  }
+  document.getElementById('workout-selector').style.display = 'block';
+  document.getElementById('workout-active').style.display = 'none';
+
+  const c = document.getElementById('program-cards');
+  if (state.templates.length === 0) {
+    c.innerHTML = '<div class="empty">Henüz program yok. Aşağıdan boş antrenman başlatabilirsin.</div>';
+    return;
+  }
+  // Built-in olanları önce, custom olanları sonra göster
+  const sorted = [...state.templates].sort((a, b) => {
+    if (a.builtIn && !b.builtIn) return -1;
+    if (!a.builtIn && b.builtIn) return 1;
+    return 0;
+  });
+
+  c.innerHTML = sorted.map(t => {
+    // Day 1, 2, 3 için renk kodu
+    let accentClass = 'custom';
+    if (/Day 1/i.test(t.name)) accentClass = 'day1';
+    else if (/Day 2/i.test(t.name)) accentClass = 'day2';
+    else if (/Day 3/i.test(t.name)) accentClass = 'day3';
+
+    const exCount = t.exercises.length;
+    const totalSets = t.exercises.reduce((a,e) => a + (parseInt(e.sets)||0), 0);
+    // İlk 4 egzersizi tag olarak göster
+    const tags = t.exercises.slice(0, 4).map(e => `<span class="program-card-tag">${e.name}</span>`).join('');
+    const moreCount = exCount > 4 ? `<span class="program-card-tag more">+${exCount-4} daha</span>` : '';
+
+    return `
+      <div class="program-card" onclick="startWorkoutFromTemplate(${t.id})">
+        <div class="program-card-accent ${accentClass}"></div>
+        <div class="program-card-name">${t.name}</div>
+        <div class="program-card-meta">${exCount} egzersiz · ${totalSets} set</div>
+        <div class="program-card-exercises">${tags}${moreCount}</div>
+      </div>`;
+  }).join('');
+}
+
+function startWorkoutFromTemplate(id) {
+  const t = state.templates.find(x => x.id === id);
+  if (!t) return;
+  document.getElementById('workout-name').value = t.name.replace(/^Day \d+ - /, '');
+  document.getElementById('workout-date').value = todayStr();
+  currentExercises = t.exercises.map(e => {
+    const setCount = parseInt(e.sets) || 3;
+    const last = findLastExercise(e.name);
+    return {
+      name: e.name,
+      sets: Array.from({ length: setCount }, (_, i) => ({
+        weight: last && last.sets[i] ? last.sets[i].weight : '',
+        reps: last && last.sets[i] ? last.sets[i].reps : ''
+      }))
+    };
+  });
+  document.getElementById('workout-selector').style.display = 'none';
+  document.getElementById('workout-active').style.display = 'block';
+  document.getElementById('active-workout-name').textContent = t.name;
+  document.getElementById('active-workout-date').textContent = formatDateNice(todayStr());
+  renderExercises();
+  window.scrollTo(0, 0);
+}
+
+function startBlankWorkout() {
+  document.getElementById('workout-name').value = '';
+  document.getElementById('workout-date').value = todayStr();
+  currentExercises = [{ name: '', sets: [{ reps: '', weight: '' }] }];
+  document.getElementById('workout-selector').style.display = 'none';
+  document.getElementById('workout-active').style.display = 'block';
+  document.getElementById('active-workout-name').textContent = 'Yeni antrenman';
+  document.getElementById('active-workout-date').textContent = formatDateNice(todayStr());
+  renderExercises();
+  window.scrollTo(0, 0);
+}
+
+function cancelWorkout() {
+  if (currentExercises.some(ex => ex.sets.some(s => s.weight || s.reps))) {
+    if (!confirm('Girdiğin veriler kaybolacak. İptal edilsin mi?')) return;
+  }
+  currentExercises = [];
+  document.getElementById('workout-name').value = '';
+  renderWorkoutHome();
+}
+
+function formatDateNice(dateStr) {
+  const months = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+  const days = ['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'];
+  const d = new Date(dateStr + 'T00:00:00');
+  return `${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]}`;
 }
 
 // ============== WORKOUT ==============
@@ -1311,7 +1565,7 @@ function saveWorkout() {
       sets: ex.sets.filter(s => s.weight && s.reps).map(s => ({ weight: +s.weight, reps: +s.reps }))
     }))
     .filter(ex => ex.sets.length > 0);
-  if (filtered.length === 0) { alert('Geçerli set yok'); return; }
+  if (filtered.length === 0) { alert('Geçerli set yok. En az bir sete ağırlık ve tekrar gir.'); return; }
   state.workouts.push({
     id: Date.now(),
     date,
@@ -1322,8 +1576,11 @@ function saveWorkout() {
   currentExercises = [];
   document.getElementById('workout-name').value = '';
   renderExercises();
-  alert('Antrenman kaydedildi');
+  // Program seçim ekranına geri dön
+  renderWorkoutHome();
   renderDashboard();
+  // Başarı mesajı
+  alert('Antrenman kaydedildi');
 }
 
 // ============== TEMPLATES ==============
@@ -1377,13 +1634,19 @@ function renderTemplates() {
     c.innerHTML = '<div class="empty">Henüz program yok</div>';
     return;
   }
-  c.innerHTML = state.templates.map(t => `
+  // Built-in olanları önce, custom olanları sonra
+  const sorted = [...state.templates].sort((a, b) => {
+    if (a.builtIn && !b.builtIn) return -1;
+    if (!a.builtIn && b.builtIn) return 1;
+    return 0;
+  });
+  c.innerHTML = sorted.map(t => `
     <div class="template-card">
       <div class="template-card-info">
-        <div class="template-name">${t.name}</div>
+        <div class="template-name">${t.name}${t.builtIn ? ' <span class="tag">hazır</span>' : ''}</div>
         <div class="template-meta">${t.exercises.map(e => `<span class="tag">${e.name} ${e.sets}×${e.reps}</span>`).join('')}</div>
       </div>
-      <button class="icon-btn" onclick="deleteTemplate(${t.id})" title="Sil">×</button>
+      ${!t.builtIn ? `<button class="icon-btn" onclick="deleteTemplate(${t.id})" title="Sil">×</button>` : ''}
     </div>
   `).join('');
 }
